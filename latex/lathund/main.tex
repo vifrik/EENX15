@@ -1,0 +1,94 @@
+\documentclass[a4paper]{article}
+
+\usepackage{listings}
+
+%% Styling
+% Remove paragraph indentation
+\setlength\parskip{1em}
+\setlength\parindent{0pt}
+
+% Change font styling
+\renewcommand{\familydefault}{\sfdefault}
+
+\input{commands.tex}
+
+\begin{document}
+\ctitle{Git-lathund}{}{}
+\clrpage
+
+'\$' avser ett nytt kommando, det vill säga alla nya rader bör köras separat.
+
+\section{Arbetsflöde}
+Sektionerna görs i ordning med undantag för sektion~\ref{status}.
+
+\subsection{Se statusuppdatering}
+\label{status}
+En statusuppdatering av repot fås genom:
+\begin{lstlisting}[language=bash]
+    $ git status
+\end{lstlisting}
+
+Statusuppdateringen visar vilka filer som ligger i index, working directory etc. Referera till bilden på Discord.
+\emph{git status} används flitigt för att ta reda på vad som kommer commitas till det lokala repot, eller för att se vilka filer som är versionshanterade.
+
+\subsection{Hämta hem ändringar}
+För att hämta hem ändringar från remote (GitHub) används:
+\begin{lstlisting}[language=bash]
+    $ git pull
+\end{lstlisting}
+När man börjar arbeta bör alla ändringar hämtas hem.
+Detta för att undvika stora konflikter senare och för att alla ska kunna arbeta mot den senaste versionen i den mån det är möjligt.
+
+Varje gång man börjar arbeta bör man inte ha några ändringar på sin lokala dator, därmed fås inga merge-konflikter.
+I det fall en merge-konflikt uppstår, se sektion~\ref{merge}.
+
+\subsection{Hantering av mergekonflikt}
+\label{merge}
+Vid \emph{git pull} uppstår ibland en s.k. mergekonflikt.
+En mergekonflikt uppstår när du ändrat något som någon annan också ändrat.
+Mergekonflikten löses genom att öppna dokumentet eller dokumenten där konflikten uppstått.
+Lättaste sättet att ta reda på vilka filer som är berörda görs med \emph{git status}.
+Hur en mergekonflikt löses beror på program och kan skilja sig väldigt mycket.
+
+När konflikten hanterats läggs filerna till med hjälp av \emph{git add}.
+Sedan görs en \emph{git commit}.
+Texten som autogenererats som commit-meddelande bör inte ändras.
+
+\subsection{Göra ändringar}
+Nu kan du börja ändra dina filer med olika program.
+Detta kan vara en kodeditor, texteditor eller liknande.
+Du kan även lägga till s.k. binary files, det vill säga till exempel bilder, pdf-er eller liknande.
+
+\subsection{Lägga till ändringar i index och commit}
+Genom att använda:
+\begin{lstlisting}[language=bash]
+    $ git add filnamn
+\end{lstlisting}
+är det möjligt att lägga till filer i index.
+Alla ändringar i index kommer att commitas.
+Du kan se vilka ändringar som är staged (ligger i index) genom deras gröna färg när du gör en \emph{git status}.
+
+I det fall en version av filen finns i index kan:
+\begin{lstlisting}[language=bash]
+    $ git add -u
+\end{lstlisting}
+användas för att lägga till alla uppdaterade (u) filer till index.
+
+För att sedan lägga till alla stagade ändrigar till ditt lokala repo används:
+\begin{lstlisting}[language=bash]
+    $ git commit -m "meddelande"
+\end{lstlisting}
+eller
+\begin{lstlisting}[language=bash]
+    $ git commit
+\end{lstlisting}
+
+\subsection{Skicka upp ändringar}
+Att skicka alla ändringar från ditt lokala repo till remote (GitHub) görs genom kommandot:
+\begin{lstlisting}[language=bash]
+    $ git push
+\end{lstlisting}
+I det fall ett felmedellande kommer upp som säger att remote ligger före din lokala branch bör en \emph{git pull} göras.
+Eventuella konflikter bör då hanteras och sedan görs en \emph{git push} igen.
+
+\end{document}
