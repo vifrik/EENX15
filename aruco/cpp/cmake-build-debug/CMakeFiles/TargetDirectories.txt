@@ -1,0 +1,4 @@
+/Users/viktor/files/git/eenx15/eenx15-code/aruco/cpp/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/viktor/files/git/eenx15/eenx15-code/aruco/cpp/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/viktor/files/git/eenx15/eenx15-code/aruco/cpp/cmake-build-debug/CMakeFiles/calibrate.dir
+/Users/viktor/files/git/eenx15/eenx15-code/aruco/cpp/cmake-build-debug/CMakeFiles/arucocpp.dir

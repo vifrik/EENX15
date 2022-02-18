@@ -1,0 +1,3 @@
+/Users/viktor/files/git/eenx15/eenx15-code/arucocpp/build/CMakeFiles/arucocpp.dir
+/Users/viktor/files/git/eenx15/eenx15-code/arucocpp/build/CMakeFiles/edit_cache.dir
+/Users/viktor/files/git/eenx15/eenx15-code/arucocpp/build/CMakeFiles/rebuild_cache.dir
