@@ -5,7 +5,6 @@ Server s;
 void setup() {
   size(700,700,P3D);
   s = new Server(this, 12000);
-  lights();
 }
 
 void draw() {  
@@ -27,15 +26,16 @@ void draw() {
     
     background(0);
     
+    int moveFactor = 300;
+    
     pushMatrix();
-    translate(x*100+350, y*100+350, -z*300);
-    //noFill();
-    stroke(255);
+    translate(x*moveFactor+350, y*moveFactor+350, -z*moveFactor);
+    rectMode(CENTER);
     rotateX(-ry);
     rotateY(-rr);
-    rotateZ(-rp);
-    //sphere(100);
-    box(100);
+    rotateZ(ry > 0 ? -rp : rp);
+    fill(0, 0, 255, 150);
+    rect(0, 0, 200, 200);
     popMatrix();
   }
 }

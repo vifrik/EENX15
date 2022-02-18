@@ -2,7 +2,7 @@
 
 from __future__ import print_function  # Python 2/3 compatibility
 #import cv2  # Import the OpenCV library
-from cv2 import cv2
+from cv2.cv2 import *
 import numpy as np  # Import Numpy library
 from cv2.aruco import estimatePoseSingleMarkers
 import socket
