@@ -20,6 +20,7 @@ int main(int argc, char** argv) {
 
         // Get rotational vecs and translational vecs of markers
         cvwrapper::rtvecs pos = c.getLocation(); // relative pos and rot of marker in relation to camera
+        // TODO send data to arduino here
 
         c.show(); // Show the frame with drawings
 
@@ -28,8 +29,6 @@ int main(int argc, char** argv) {
     }
 
     c.release(); // Stop capturing video
-
-    // TODO close socket here
 
     return 0;
 }
