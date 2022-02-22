@@ -77,5 +77,9 @@ void cvwrapper::show() {
     imshow("Live preview", frame);
 }
 
+int cvwrapper::numberOfMarkers() {
+    return markerIds.size();
+}
+
 
 

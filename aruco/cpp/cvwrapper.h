@@ -33,6 +33,7 @@ public:
     void release();
     bool readFrame();
     void detect();
+    int numberOfMarkers();
     void drawBoundingBoxes(Scalar color);
     void drawTexts(Scalar color);
     void show();
