@@ -70,7 +70,7 @@ cvwrapper::rtvecs cvwrapper::getLocation() {
 
     aruco::estimatePoseSingleMarkers(markerCorners, 0.15, cameraMatrix,
                                      distCoeffs, rtVecs.rvecs, rtVecs.tvecs);
-    return cvwrapper::rtvecs();
+    return cvwrapper::rtVecs;
 }
 
 void cvwrapper::show() {
