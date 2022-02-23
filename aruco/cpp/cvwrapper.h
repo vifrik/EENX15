@@ -18,7 +18,6 @@ private:
     Ptr<aruco::Dictionary> dictionary;
     Ptr<aruco::DetectorParameters> parameters = aruco::DetectorParameters::create();
     std::vector<std::vector<Point2f>> markerCorners, rejectedCandidates;
-    std::vector<int> markerIds;
     Mat frame;
 
     void startCapture(int index, int apiPreference = CAP_ANY);
@@ -36,8 +35,11 @@ public:
     int numberOfMarkers();
     void drawBoundingBoxes(Scalar color);
     void drawTexts(Scalar color);
+    void drawText(std::string text, int x, int y);
     void show();
     rtvecs getLocation();
+
+    std::vector<int> markerIds;
 };
 
 

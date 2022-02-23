@@ -60,6 +60,10 @@ void cvwrapper::drawTexts(Scalar color) {
     }
 }
 
+void cvwrapper::drawText(std::string text, int x, int y) {
+    putText(frame, text, Point(x, y), FONT_HERSHEY_DUPLEX,1, Scalar (0,0,255), 2, false);
+}
+
 cvwrapper::rtvecs cvwrapper::getLocation() {
     // Camera calibration, use executable calibrate to calibrate
     Mat cameraMatrix = (Mat1f(3, 3) << 971.35220497224020, 0.0, 646.72249200823774, 0.0,
