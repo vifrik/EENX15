@@ -47,6 +47,8 @@ void cvwrapper::drawBoundingBoxes(Scalar color) {
         for (int j = 0; j < 4; j++) {
             line(frame, corners[j], corners[(j + 1) % 4], color, 2, LINE_8);
         }
+
+        aruco::drawAxis(frame, cameraMatrix, distCoeffs, rtVecs.rvecs[i], rtVecs.tvecs[i], 0.05);
     }
 }
 
@@ -66,13 +68,10 @@ void cvwrapper::drawText(std::string text, int x, int y) {
 
 cvwrapper::rtvecs cvwrapper::getLocation() {
     // Camera calibration, use executable calibrate to calibrate
-    Mat cameraMatrix = (Mat1f(3, 3) << 971.35220497224020, 0.0, 646.72249200823774, 0.0,
-            970.01993978791074, 357.74170661497186, 0.0, 0.0, 1.0);
-    Mat distCoeffs = (Mat1f(5, 1) << -0.036721326921445439, 0.60501514643400323,
-            0.0027156799005218536, 0.0040208404882518750,
-            -1.8414740894267736);
 
-    aruco::estimatePoseSingleMarkers(markerCorners, 0.15, cameraMatrix,
+
+    // Marker is 14 cm
+    aruco::estimatePoseSingleMarkers(markerCorners, 0.14, cameraMatrix,
                                      distCoeffs, rtVecs.rvecs, rtVecs.tvecs);
     return cvwrapper::rtVecs;
 }

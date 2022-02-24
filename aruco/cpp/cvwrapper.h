@@ -20,6 +20,12 @@ private:
     std::vector<std::vector<Point2f>> markerCorners, rejectedCandidates;
     Mat frame;
 
+    Mat cameraMatrix = (Mat1f(3, 3) << 971.35220497224020, 0.0, 646.72249200823774, 0.0,
+            970.01993978791074, 357.74170661497186, 0.0, 0.0, 1.0);
+    Mat distCoeffs = (Mat1f(5, 1) << -0.036721326921445439, 0.60501514643400323,
+            0.0027156799005218536, 0.0040208404882518750,
+            -1.8414740894267736);
+
     void startCapture(int index, int apiPreference = CAP_ANY);
 protected:
 public:

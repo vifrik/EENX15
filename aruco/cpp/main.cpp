@@ -1,5 +1,6 @@
 // SERIAL or TCP
 #define DEBUG
+#define TCP
 
 #include <opencv2/aruco.hpp>
 #include <opencv2/videoio.hpp>
@@ -47,7 +48,6 @@ int main(int argc, char** argv) {
         std::cerr << "Write failed";
 #endif
 
-    // read markers from file
     std::vector<Affine3d> markers;
     FileStorage fs_read("markers.txt",0);
     writevec::readVectorAffine3d(fs_read, "markers", markers);
@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
             sumCameraRotationalVector /= weightTotal;
 
             std::ostringstream os;
-            os << sumCameraTranslationalVector << "\n" << sumCameraRotationalVector;
+            os << std::fixed << std::setprecision(3) << sumCameraTranslationalVector << "\n" << sumCameraRotationalVector;
             std::string send = os.str();
 
             char char_array[send.length() + 1];

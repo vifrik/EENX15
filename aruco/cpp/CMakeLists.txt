@@ -14,4 +14,7 @@ target_link_libraries( arucocpp ${OpenCV_LIBS} )
 add_executable(calibrate calibrate.cpp)
 target_link_libraries( calibrate ${OpenCV_LIBS} )
 
+add_executable(writemarkers writemarkers.cpp)
+target_link_libraries( writemarkers ${OpenCV_LIBS} )
+
 add_executable(test test.cpp)
