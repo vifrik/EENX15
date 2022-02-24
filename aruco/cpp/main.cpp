@@ -1,20 +1,51 @@
+// SERIAL or TCP
+#define DEBUG
+
 #include <opencv2/aruco.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <iostream>
 #include <opencv2/opencv.hpp>
-#include "cvwrapper.h"
-#include "tcpclient.h"
+#include <math.h>
+#include <string.h>
+
+#ifdef SERIAL
+#include <unistd.h>  // UNIX standard function definitions
+#include <fcntl.h>   // file control
+#endif
+
 #include "math.h"
+#include "cvwrapper.h"
+#include "writevec.h"
+
+#ifdef TCP
+#include "tcpclient.h"
+#endif
+
 
 using namespace cv;
 
 int main(int argc, char** argv) {
     cvwrapper c = cvwrapper(0, CAP_ANY);
+#ifdef TCP
     tcpclient tcp = tcpclient();
     tcp.connectTo("127.0.0.1", 12000);
+#endif
 
+#ifdef SERIAL
+    int fileDescriptor;
+
+    fileDescriptor = open("/dev/ttyf1", O_RDWR | O_NOCTTY | O_NDELAY);
+    if (fileDescriptor < 0) {
+        std::cerr << "Unable to open port /dev/ttyf1";
+    }
+    fcntl(fileDescriptor, F_SETFL, 0);
+
+    int bytesWritten = write(fileDescriptor, "ATZ\r", 4);
+    if (bytesWritten < 0)
+        std::cerr << "Write failed";
+#endif
 
     std::vector<Affine3d> markers;
     Vec3d r(0, 0, 0);
@@ -23,20 +54,23 @@ int main(int argc, char** argv) {
 
     markers.push_back(marker1);
 
+    FileStorage fs("markers.txt",FileStorage::WRITE);
+    writevec::writeVectorAffine3d(fs, "markers", markers);
+
     for (;;) {
         c.readFrame(); // Get the current frame
         c.detect(); // detect markers in frame
 
         if (c.numberOfMarkers()) {
-            Scalar col = Scalar(0,255,0); // Red, green, blue color
-            c.drawBoundingBoxes(col); // Draw bounding boxes around all markers
-            c.drawTexts(col); // Draw id label on marker
-
             // Get rotational vecs and translational vecs of markers
             cvwrapper::rtvecs pos = c.getLocation(); // relative pos and rot of marker in relation to camera
-            // TODO send data to arduino here
 
-            Mat1d sumCameraRotationalVector(3, 1), sumCameraTranslationalVector(3, 1);
+            double distanceTotal = 0;
+            for (int i = 0; i < c.numberOfMarkers(); i++)
+                distanceTotal += pos.tvecs[i][2];
+
+            double weightTotal = 0;
+            Vec3d sumCameraRotationalVector, sumCameraTranslationalVector;
             for (int i = 0; i < c.numberOfMarkers(); i++) {
                 Mat objectRotationalMatrix;
                 Rodrigues(pos.rvecs[i], objectRotationalMatrix);
@@ -47,20 +81,38 @@ int main(int argc, char** argv) {
                 // Transform of camera relative world
                 Affine3d tCameraWorld = markers[c.markerIds[i]]*tMarkerCamera;
 
-                std::ostringstream os;
-                os << tCameraWorld.translation() << "\n"
-                   << oMath::rotationMatrixToEulerAngles((Mat3d) tCameraWorld.rotation());
+                Vec3d translation = tCameraWorld.translation();
+                Vec3d rotation = oMath::rotationMatrixToEulerAngles((Mat3d) tCameraWorld.rotation());
 
-                std::string send = os.str();
-                c.drawText(send, 50, 50);
-                char char_array[send.length() + 1];
-                strcpy(char_array, send.c_str());
-                tcp.sendMsg(char_array, sizeof char_array);
+                double weight = pow(pos.tvecs[i][2], 2) / distanceTotal;
+                sumCameraTranslationalVector += weight * translation;
+                sumCameraRotationalVector += weight * rotation;
+                weightTotal += weight;
             }
+
+            sumCameraTranslationalVector /= weightTotal;
+            sumCameraRotationalVector /= weightTotal;
+
+            std::ostringstream os;
+            os << sumCameraTranslationalVector << "\n" << sumCameraRotationalVector;
+            std::string send = os.str();
+
+            char char_array[send.length() + 1];
+            strcpy(char_array, send.c_str());
+#ifdef TCP
+            tcp.sendMsg(char_array, sizeof char_array);
+#endif
+
+#ifdef DEBUG
+            Scalar col = Scalar(0,255,0); // Red, green, blue color
+            c.drawBoundingBoxes(col); // Draw bounding boxes around all markers
+            c.drawTexts(col); // Draw id label on marker
+            c.drawText(send, 50, 50);
+#endif
         }
-
+#ifdef DEBUG
         c.show(); // Show the frame with drawings
-
+#endif
         if (waitKey(2) >= 0) // Close on any key
             break;
     }

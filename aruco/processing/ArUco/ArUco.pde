@@ -13,9 +13,9 @@ void setup() {
 }
 
 void draw() {  
-  background(0);
+  //background(0);
   Marker marker = new Marker(1, 0, 0, 0, 0, 0);
-  marker.draw();
+  //marker.draw();
   
   // check if a client sent something
   Client c = s.available();
