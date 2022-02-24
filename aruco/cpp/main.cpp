@@ -47,26 +47,11 @@ int main(int argc, char** argv) {
         std::cerr << "Write failed";
 #endif
 
-
-
+    // read markers from file
     std::vector<Affine3d> markers;
-    Vec3d r(0, 0, 0);
-    Vec3d t(1.0,0,0);
-    Affine3d marker1(oMath::eulerAnglesToRotationMatrix(r), t);
-
-    markers.push_back(marker1);
-
-    FileStorage fs("markers.txt",FileStorage::WRITE);
-    writevec::writeVectorAffine3d(fs, "markers", markers);
-    fs.release();
-
     FileStorage fs_read("markers.txt",0);
-    std::vector<Affine3d> markers2;
-    writevec::readVectorAffine3d(fs_read, "markers", markers2);
+    writevec::readVectorAffine3d(fs_read, "markers", markers);
     fs_read.release();
-
-    //FileStorage fs2("markers.txt",FileStorage::WRITE);
-    //writevec::writeVectorAffine3d(fs2, "read_markers", markers2);
 
     for (;;) {
         c.readFrame(); // Get the current frame
