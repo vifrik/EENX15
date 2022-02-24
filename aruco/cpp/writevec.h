@@ -18,7 +18,7 @@ namespace writevec {
         {
             fs << name + "_" + std::to_string(i);
             Affine3d a = data[i];
-            fs << a;
+            fs << a.matrix;
         }
         fs << "}";
     }
@@ -33,8 +33,12 @@ namespace writevec {
         for (; current != it_end; ++current)
         {
             Affine3d a;
+            Mat b;
+
             FileNode item = *current;
-            item >> a;
+            item >> b;
+            a.matrix = b;
+
             data.push_back(a);
         }
     }
