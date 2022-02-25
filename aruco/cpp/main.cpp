@@ -10,14 +10,14 @@
 #include <math.h>
 #include <string.h>
 
+#include "math.h"
+#include "cvwrapper.h"
+#include "writevec.h"
+
 #ifdef SERIAL
 #include <unistd.h>  // UNIX standard function definitions
 #include <fcntl.h>   // file control
 #endif
-
-#include "math.h"
-#include "cvwrapper.h"
-#include "writevec.h"
 
 #ifdef TCP
 #include "tcpclient.h"
