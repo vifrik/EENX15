@@ -60,10 +60,6 @@ int main(int argc, char** argv) {
             // Get rotational vecs and translational vecs of markers
             cvwrapper::rtvecs pos = c.getLocation(); // relative pos and rot of marker in relation to camera
 
-            double distanceTotal = 0;
-            for (int i = 0; i < c.numberOfMarkers(); i++)
-                distanceTotal += pos.tvecs[i][2];
-
             double weightTotal = 0;
             Vec3d sumCameraRotationalVector, sumCameraTranslationalVector;
             for (int i = 0; i < c.numberOfMarkers(); i++) {
@@ -83,8 +79,8 @@ int main(int argc, char** argv) {
                 Vec3d translation = tCameraWorld.translation();
                 Vec3d rotation = oMath::rotationMatrixToEulerAngles((Mat3d) tCameraWorld.rotation());
 
-                // distance^2/sumDist
-                double weight = pow(pos.tvecs[i][2], 2) / distanceTotal;
+                // 1/distance^2
+                double weight = 1 / pow(pos.tvecs[i][2], 2);
                 sumCameraTranslationalVector += weight * translation;
                 sumCameraRotationalVector += weight * rotation;
                 weightTotal += weight;
@@ -98,9 +94,9 @@ int main(int argc, char** argv) {
             os << std::fixed << std::setprecision(3) << sumCameraTranslationalVector << "\n" << sumCameraRotationalVector;
             std::string send = os.str();
 
+#ifdef TCP
             char char_array[send.length() + 1];
             strcpy(char_array, send.c_str());
-#ifdef TCP
             tcp.sendMsg(char_array, sizeof char_array);
 #endif
 
