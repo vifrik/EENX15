@@ -7,7 +7,6 @@
 
 cvwrapper::cvwrapper(int index, int apiPreference) {
     startCapture(index, apiPreference);
-
     dictionary = aruco::getPredefinedDictionary(aruco::DICT_4X4_50);
 }
 
@@ -25,21 +24,23 @@ void cvwrapper::release() {
     destroyAllWindows();
 }
 
-bool cvwrapper::readFrame() {
+bool cvwrapper::readFrame(InputOutputArray &frame) {
     videoCapture.read(frame);
     if (frame.empty()) {
         std::cerr << "ERROR! blank frame grabbed\n";
         return false;
     }
+    detect(frame);
+
     return true;
 }
 
-void cvwrapper::detect() {
+void cvwrapper::detect(InputOutputArray &frame) {
     aruco::detectMarkers(frame, dictionary, markerCorners, markerIds, parameters,
                          rejectedCandidates);
 }
 
-void cvwrapper::drawBoundingBoxes(Scalar color) {
+void cvwrapper::drawBoundingBoxes(InputOutputArray &frame, Scalar color) {
     for (int i = 0; i < markerIds.size(); i++) {
         std::vector<Point2f> corners = markerCorners[i]; // Get current corners of tag with id, id
 
@@ -52,7 +53,7 @@ void cvwrapper::drawBoundingBoxes(Scalar color) {
     }
 }
 
-void cvwrapper::drawTexts(Scalar color) {
+void cvwrapper::drawIds(InputOutputArray &frame, Scalar color) {
     for (int i = 0; i < markerIds.size(); i++) {
         std::vector<Point2f> corners = markerCorners[i]; // Get current corners of tag with id, id
 
@@ -62,21 +63,34 @@ void cvwrapper::drawTexts(Scalar color) {
     }
 }
 
-void cvwrapper::drawText(std::string text, int x, int y) {
+void cvwrapper::drawBox(InputOutputArray &frame, Scalar color, int x, int y, int w, int h, int thickness) {
+    Point tl, tr, bl, br; // top-left, top-right, bottom-left, bottom-right
+    tl = Point(x, y);
+    tr = Point(x+w, y);
+    bl = Point(x, y+h);
+    br = Point(x+w, y+h);
+    line(frame, tl, tr, color, thickness, LINE_8);
+    line(frame, tr, br, color, thickness, LINE_8);
+    line(frame, br, bl, color, thickness, LINE_8);
+    line(frame, bl, tl, color, thickness, LINE_8);
+}
+
+void cvwrapper::drawCircle(InputOutputArray &frame, Scalar color, int x, int y, int r) {
+    circle( frame, Point(x, y),r, color, FILLED, LINE_8 );
+}
+
+void cvwrapper::drawText(InputOutputArray &frame, std::string text, int x, int y) {
     putText(frame, text, Point(x, y), FONT_HERSHEY_DUPLEX,1, Scalar (0,0,255), 2, false);
 }
 
 cvwrapper::rtvecs cvwrapper::getLocation() {
-    // Camera calibration, use executable calibrate to calibrate
-
-
     // Marker is 14 cm
     aruco::estimatePoseSingleMarkers(markerCorners, 0.14, cameraMatrix,
                                      distCoeffs, rtVecs.rvecs, rtVecs.tvecs);
     return cvwrapper::rtVecs;
 }
 
-void cvwrapper::show() {
+void cvwrapper::show(InputOutputArray &frame) {
     imshow("Live preview", frame);
 }
 

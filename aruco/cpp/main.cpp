@@ -53,8 +53,8 @@ int main(int argc, char** argv) {
     fs_read.release();
 
     for (;;) {
-        c.readFrame(); // Get the current frame
-        c.detect(); // detect markers in frame
+        Mat frame;
+        c.readFrame(frame); // Get the current frame
 
         if (c.numberOfMarkers()) {
             // Get rotational vecs and translational vecs of markers
@@ -106,19 +106,23 @@ int main(int argc, char** argv) {
 
 #ifdef DEBUG
             Scalar col = Scalar(255,53,184); // Red, green, blue color
-            c.drawBoundingBoxes(col); // Draw bounding boxes around all markers
-            c.drawTexts(col); // Draw id label on marker
-            c.drawText(send, 50, 50);
-            circle( c.frame,
-                    Point(sumCameraTranslationalVector[0]*400+50, sumCameraTranslationalVector[1]*400+50),
-                    5,
-                    Scalar( 255, 0, 0 ),
-                    FILLED,
-                    LINE_8 );
+            c.drawBoundingBoxes(frame, col); // Draw bounding boxes around all markers
+            c.drawIds(frame, col); // Draw id label on marker
+            //c.drawText(frame, send, 50, 50);
+            c.drawBox(frame, col, 0, 0, 400, 400);
+            c.drawCircle(frame, col, sumCameraTranslationalVector[0]*400/2,
+                         sumCameraTranslationalVector[1]*400/2, 5);
+            std::ostringstream s;
+            s << "X: " << sumCameraTranslationalVector[0]
+            << " Y: " << sumCameraTranslationalVector[1]
+            << " R: " << sumCameraRotationalVector[2];
+            c.drawText(frame, s.str(), sumCameraTranslationalVector[0]*400/2,
+                       sumCameraTranslationalVector[1]*400/2);
+
 #endif
         }
 #ifdef DEBUG
-        c.show(); // Show the frame with drawings
+        c.show(frame); // Show the frame with drawings
 #endif
         if (waitKey(2) >= 0) // Close on any key
             break;

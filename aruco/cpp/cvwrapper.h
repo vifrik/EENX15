@@ -26,10 +26,9 @@ private:
             -1.8414740894267736);
 
     void startCapture(int index, int apiPreference = CAP_ANY);
+    void detect(InputOutputArray &frame);
 protected:
 public:
-    Mat frame;
-
     struct rtvecs {
         std::vector<Vec3d> rvecs;
         std::vector<Vec3d> tvecs;
@@ -37,13 +36,14 @@ public:
 
     cvwrapper(int index, int apiPreference);
     void release();
-    bool readFrame();
-    void detect();
+    bool readFrame(InputOutputArray &frame);
     int numberOfMarkers();
-    void drawBoundingBoxes(Scalar color);
-    void drawTexts(Scalar color);
-    void drawText(std::string text, int x, int y);
-    void show();
+    void drawBoundingBoxes(InputOutputArray &frame, Scalar color);
+    void drawIds(InputOutputArray &frame, Scalar color);
+    void drawText(InputOutputArray &frame, std::string text, int x, int y);
+    void drawBox(InputOutputArray &frame, Scalar color, int x, int y, int w, int h, int thickness=2);
+    void drawCircle(InputOutputArray &frame, Scalar color, int x, int y, int r);
+    void show(InputOutputArray &frame);
     rtvecs getLocation();
 
     std::vector<int> markerIds;
