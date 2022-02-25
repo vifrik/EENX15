@@ -18,6 +18,16 @@ int main(int argc, char** argv) {
     Affine3d marker2(oMath::eulerAnglesToRotationMatrix(r2), t2);
     markers.push_back(marker2);
 
+    Vec3d r3(-M_PI_2, 0, M_PI);
+    Vec3d t3(1.0,2.0,0);
+    Affine3d marker3(oMath::eulerAnglesToRotationMatrix(r3), t3);
+    markers.push_back(marker3);
+
+    Vec3d r4(-M_PI_2, 0, M_PI_2);
+    Vec3d t4(2.0,1.0,0);
+    Affine3d marker4(oMath::eulerAnglesToRotationMatrix(r4), t4);
+    markers.push_back(marker4);
+
     FileStorage fs_write("markers.txt",1);
     writevec::writeVectorAffine3d(fs_write, "markers", markers);
     fs_write.release();

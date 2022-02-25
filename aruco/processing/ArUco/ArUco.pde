@@ -7,8 +7,8 @@ void setup() {
   size(700,700,P3D);
   s = new Server(this, 12000);
   
-  camera(-40.0, 40.0, 120.0,
-         -40.0, 40.0, 0.0, 
+  camera(40.0, 40.0, 120.0,
+         40.0, 40.0, 0.0, 
          0.0, 1.0, 0.0);
 }
 
@@ -40,7 +40,7 @@ void draw() {
       String[] parts = joined.split(", ",0);
       
       int scalar = 40;
-      float x = -Float.parseFloat(parts[0])*scalar; // Left to right handed hack :-)
+      float x = Float.parseFloat(parts[0])*scalar;
       float y = Float.parseFloat(parts[1])*scalar;  
       float z = Float.parseFloat(parts[2])*scalar;  
       float rx = Float.parseFloat(parts[3]);  

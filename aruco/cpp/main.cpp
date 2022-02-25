@@ -71,21 +71,27 @@ int main(int argc, char** argv) {
                 Mat objectRotationalMatrix;
                 Rodrigues(pos.rvecs[i], objectRotationalMatrix);
 
-                // Transform of marker relative camera
+                // fråga mig inte varför detta funkar... linalg-magi helt enkelt
+                pos.tvecs[i][0] *= -1;
+
+                // transform for marker relative camera
                 Affine3d tMarkerCamera(objectRotationalMatrix, pos.tvecs[i]);
 
-                // Transform of camera relative world
+                // transform for camera relative world
                 Affine3d tCameraWorld = markers[c.markerIds[i]]*tMarkerCamera;
 
+                // translation and rotation vectors relative world
                 Vec3d translation = tCameraWorld.translation();
                 Vec3d rotation = oMath::rotationMatrixToEulerAngles((Mat3d) tCameraWorld.rotation());
 
+                // distance^2/sumDist
                 double weight = pow(pos.tvecs[i][2], 2) / distanceTotal;
                 sumCameraTranslationalVector += weight * translation;
                 sumCameraRotationalVector += weight * rotation;
                 weightTotal += weight;
             }
 
+            // calculate weighted average
             sumCameraTranslationalVector /= weightTotal;
             sumCameraRotationalVector /= weightTotal;
 
@@ -100,10 +106,16 @@ int main(int argc, char** argv) {
 #endif
 
 #ifdef DEBUG
-            Scalar col = Scalar(0,255,0); // Red, green, blue color
+            Scalar col = Scalar(255,53,184); // Red, green, blue color
             c.drawBoundingBoxes(col); // Draw bounding boxes around all markers
             c.drawTexts(col); // Draw id label on marker
             c.drawText(send, 50, 50);
+            circle( c.frame,
+                    Point(sumCameraTranslationalVector[0]*400+50, sumCameraTranslationalVector[1]*400+50),
+                    5,
+                    Scalar( 255, 0, 0 ),
+                    FILLED,
+                    LINE_8 );
 #endif
         }
 #ifdef DEBUG

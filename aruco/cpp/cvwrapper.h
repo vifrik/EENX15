@@ -18,7 +18,6 @@ private:
     Ptr<aruco::Dictionary> dictionary;
     Ptr<aruco::DetectorParameters> parameters = aruco::DetectorParameters::create();
     std::vector<std::vector<Point2f>> markerCorners, rejectedCandidates;
-    Mat frame;
 
     Mat cameraMatrix = (Mat1f(3, 3) << 971.35220497224020, 0.0, 646.72249200823774, 0.0,
             970.01993978791074, 357.74170661497186, 0.0, 0.0, 1.0);
@@ -29,6 +28,8 @@ private:
     void startCapture(int index, int apiPreference = CAP_ANY);
 protected:
 public:
+    Mat frame;
+
     struct rtvecs {
         std::vector<Vec3d> rvecs;
         std::vector<Vec3d> tvecs;
