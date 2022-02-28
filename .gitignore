@@ -1,2 +1,6 @@
 make-build*
 cmake-build*
+*.bin
+*.elf
+*.slx.*
+*.slxc
