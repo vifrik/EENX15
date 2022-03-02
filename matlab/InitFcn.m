@@ -1,6 +1,6 @@
 %% %%% Test case definiton %%%%%%%%%%%%%%%%%%%%%%%% %%
     close all;clc;clear all;
-    path = 'Sinusvåg';  %'Rak bana'  'Stor kurva' 'Skarp kurva' 'Sinusvåg' 
+    path = 'Rak bana';  %'Rak bana'  'Stor kurva' 'Skarp kurva' 'Sinusvåg' 
     desiredSpeed = -.5;  % Longitudinal Speed [m/s]
     LookDistance  = 0.4; %Look-ahead distance, bra värden; 0.375, 0.4, 0.4
 %% %%% Vehicle parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
