@@ -19,4 +19,4 @@ target_link_libraries(writemarkers ${OpenCV_LIBS})
 
 add_executable(test test.cpp)
 
-add_executable(ppc ppc.cpp purePc.h)
+add_executable(ppc ppc.cpp purePursuitController.h)
