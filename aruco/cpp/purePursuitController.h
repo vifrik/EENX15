@@ -51,7 +51,7 @@ public:
                 break;
             }
 
-            if (i == path.size() - 1) {
+            if (i == path.size() - 1 && targetCandidates.empty()) {
                 return path.at(path.size() - 1);
             }
         }
