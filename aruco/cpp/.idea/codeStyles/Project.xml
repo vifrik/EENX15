@@ -1,0 +1,19 @@
+<component name="ProjectCodeStyleConfiguration">
+  <code_scheme name="Project" version="173">
+    <Objective-C>
+      <option name="KEEP_STRUCTURES_IN_ONE_LINE" value="true" />
+      <option name="SPACE_WITHIN_TEMPLATE_DOUBLE_GT" value="false" />
+      <option name="SPACE_BEFORE_COLON_IN_FOREACH" value="true" />
+    </Objective-C>
+    <Objective-C-extensions>
+      <extensions>
+        <pair source="cpp" header="h" fileNamingConvention="CAMEL_CASE" />
+        <pair source="c" header="h" fileNamingConvention="NONE" />
+        <pair source="cu" header="cuh" fileNamingConvention="NONE" />
+      </extensions>
+    </Objective-C-extensions>
+    <codeStyleSettings language="ObjectiveC">
+      <option name="KEEP_CONTROL_STATEMENT_IN_ONE_LINE" value="false" />
+    </codeStyleSettings>
+  </code_scheme>
+</component>
