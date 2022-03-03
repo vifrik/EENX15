@@ -5,16 +5,18 @@ set(CMAKE_CXX_STANDARD 20)
 
 list(APPEND CMAKE_MODULE_PATH "")
 
-find_package( OpenCV REQUIRED )
-include_directories( ${OpenCV_INCLUDE_DIRS} )
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
 
 add_executable(arucocpp main.cpp cvwrapper.cpp cvwrapper.h tcpclient.cpp tcpclient.h math.h writevec.h defines.h)
-target_link_libraries( arucocpp ${OpenCV_LIBS} )
+target_link_libraries(arucocpp ${OpenCV_LIBS})
 
 add_executable(calibrate calibrate.cpp)
-target_link_libraries( calibrate ${OpenCV_LIBS} )
+target_link_libraries(calibrate ${OpenCV_LIBS})
 
 add_executable(writemarkers writemarkers.cpp)
-target_link_libraries( writemarkers ${OpenCV_LIBS} )
+target_link_libraries(writemarkers ${OpenCV_LIBS})
 
 add_executable(test test.cpp)
+
+add_executable(ppc ppc.cpp purePursuitController.h)
