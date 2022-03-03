@@ -1,4 +1,0 @@
-Paths for lib
-
-/usr/local/include/opencv4
-/usr/local/lib/cmake/opencv4
