@@ -7,9 +7,9 @@
 
 #include <Servo.h>
 
-#define STRAIGHT_TIME 968;
-#define MAX_RIGHT_TIME 800
-#define MAX_LEFT_TIME 1136
+#define STRAIGHT_TIME 968
+#define MAX_RIGHT_TIME STRAIGHT_TIME + 168
+#define MAX_LEFT_TIME STRAIGHT_TIME - 168
 #define MAX_ANGLE 25*PI/180
 
 class ServoManager {
