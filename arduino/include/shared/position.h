@@ -20,9 +20,10 @@ private:
     Coord positionTruckOld = Coord(0, 0);
     float angleTrailerOld = 0;
     float phiDesiredOld = 0;
+    int timeOld = 0;
 
 public:
-    Position() {}
+    Position() = default;
 
     Coord getPositionTrailer(float phi) {
         positionTruck = Coord(0, 0); // get these two from serial comms
@@ -43,14 +44,24 @@ public:
         float phiDesired = -3 * atan2(2 * LENGTH_TRAILER * sin(angleTrailerError),
                                       CoordOperations::magnitude(lookaheadDelta));
 
-        float d_angleTrailer = (angleTrailer - angleTrailerOld) / 2.0f;
-        float d_phiDesired = (phiDesired - phiDesiredOld) / 2.0f;
+        if (timeOld == 0) {
+            timeOld = millis();
+            return 0;
+        }
+
+        int timeNow = millis();
+        float deltaTime = (timeNow - timeOld) / 1000.0f; // [s]
+
+        float d_angleTrailer = (angleTrailer - angleTrailerOld) / deltaTime;
+        float d_phiDesired = (phiDesired - phiDesiredOld) / deltaTime;
         Coord positionTruckDelta = CoordOperations::subtract(positionTruck, positionTruckOld);
-        Coord d_positionTruck = CoordOperations::divide(positionTruckDelta, 2.0f);
+        Coord d_positionTruck = CoordOperations::divide(positionTruckDelta, deltaTime);
         float velocityTruck = CoordOperations::magnitude(d_positionTruck);
 
+        millis();
         angleTrailerOld = angleTrailer;
         phiDesiredOld = phiDesired;
+        timeOld = timeNow;
 
         float delta = -atan2((d_angleTrailer - d_phiDesired) * LENGTH_TRUCK, velocityTruck);
         return constrain(delta, -DELTA_MAX * PI / 180, DELTA_MAX * PI / 180);

@@ -5,7 +5,7 @@
 #ifndef ARDUINO_MAGNETIC_H
 #define ARDUINO_MAGNETIC_H
 
-#include "math.h"
+#include <cmath>
 #include "Wire.h"
 #include "AS5600.h"
 

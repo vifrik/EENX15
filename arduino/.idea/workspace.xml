@@ -16,7 +16,8 @@
   <component name="ChangeListManager">
     <list default="true" id="62d93a34-94e8-4553-9641-5e427b9cb0b5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vera/vera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/vera/vera.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/shared/magnetic.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/shared/magnetic.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/shared/position.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/shared/position.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,7 +126,7 @@
       <workItem from="1646352709385" duration="7797000" />
       <workItem from="1646362113313" duration="336000" />
       <workItem from="1646382853614" duration="987000" />
-      <workItem from="1646383956829" duration="3699000" />
+      <workItem from="1646383956829" duration="4203000" />
     </task>
     <servers />
   </component>
