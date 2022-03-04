@@ -4,11 +4,11 @@
 #include <Servo.h>
 #include <Vector.h>
 
-#include "magnetic.h"
-#include "motor.h"
-#include "position.h"
-#include "purePursuitController.h"
-#include "coord.h"
+#include "shared/position.h"
+#include "shared/purePursuitController.h"
+#include "shared/magnetic.h"
+#include "shared/motor.h"
+#include "shared/coord.h"
 
 Servo servo;
 int straightTime = 968; // diff 168
@@ -21,7 +21,7 @@ Motor motor = Motor(2, 3, 4);
 
 Position position;
 
-Vector <Coord> path;
+Vector<Coord> path;
 purePursuitController ppc = purePursuitController(path, 0.2);
 
 /// Get microseconds for servo motor
