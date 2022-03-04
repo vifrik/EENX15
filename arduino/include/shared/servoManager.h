@@ -26,7 +26,7 @@ private:
 
 public:
     ServoManager(int pin) {
-        servo.attach(11);
+        servo.attach(pin);
     }
 
     void writeAngle(float angle) {
