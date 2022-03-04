@@ -16,9 +16,9 @@
   <component name="ChangeListManager">
     <list default="true" id="62d93a34-94e8-4553-9641-5e427b9cb0b5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platformio.ini" beforeDir="false" afterPath="$PROJECT_DIR$/platformio.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/magnet/test.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/vera/motor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/vera/motor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/vera/position.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/vera/position.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/vera/vera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/vera/vera.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,7 +121,7 @@
       <workItem from="1646332962694" duration="527000" />
       <workItem from="1646343803183" duration="8258000" />
       <workItem from="1646352354241" duration="132000" />
-      <workItem from="1646352709385" duration="4849000" />
+      <workItem from="1646352709385" duration="7363000" />
     </task>
     <servers />
   </component>

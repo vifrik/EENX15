@@ -30,7 +30,7 @@ public:
         analogWrite(speedPin, speed);
     }
 
-    void stop() {
+    void stop() const {
         digitalWrite(firstDirPin, LOW);
         digitalWrite(secondDirPin, LOW);
     }

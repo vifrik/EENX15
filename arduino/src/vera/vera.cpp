@@ -51,10 +51,10 @@ void setup() {
 
 void loop() {
     float phi = Magnetic::readAngle();
-    Coord positionTrailer = position.updatePosition(phi);
-    Coord positionTarget = ppc.getTarget(positionTrailer); // ppc logic here
-    float phiDesired = position.getPhiDesired(positionTarget);
-    float delta = position.phiDesiredToDelta(phiDesired);
+    Coord positionTrailer = position.getPositionTrailer(phi);
+    Coord positionTarget = ppc.getTarget(positionTrailer);
+    float delta = position.steeringAngle(positionTrailer, positionTarget);
+
     servo.writeMicroseconds(deltaToMs(delta * 180 / PI));
 
     if (ppc.atEnd()) {

@@ -14,44 +14,45 @@
 
 class Position {
 private:
-    Coord positionTrailerOld = Coord(0, 0);
-    Coord positionTrailer = Coord(0, 0);
-    Coord dPositionTrailer = Coord(0, 0);
-
-    float thetaTruck = 0;
-    float thetaTrailer = 0;
-
+    Coord positionTruck = Coord(0, 0);
+    float angleTrailer = 0;
+    
+    Coord positionTruckOld = Coord(0, 0);
+    float angleTrailerOld = 0;
     float phiDesiredOld = 0;
 
 public:
     Position() {}
 
-    Coord updatePosition(float phi) {
-        // get pos, read serial here
+    Coord getPositionTrailer(float phi) {
+        positionTruck = Coord(0, 0); // get these two from serial comms
+        float angleTruck = 0;
 
-        Coord difference = CoordOperations::subtract(positionTrailer, positionTrailerOld);
-        dPositionTrailer = CoordOperations::divide(difference, 2);
-        positionTrailerOld = positionTrailer;
+        Coord positionTrailer = Coord(positionTruck.x + cos(phi) * LENGTH_TRAILER,
+                                      positionTruck.y + sin(phi) * LENGTH_TRAILER);
+        angleTrailer = angleTruck + PI + phi;
 
-        // update trailer pos
         return positionTrailer;
     }
 
-    float getPhiDesired(Coord positionDesired) {
-        Coord difference = CoordOperations::subtract(positionTrailer, positionDesired);
-        float thetaError = atan2(difference.y, difference.y);
+    float steeringAngle(Coord positionTrailer, Coord positionDesired) {
+        Coord lookaheadDelta = CoordOperations::subtract(positionDesired, positionTrailer);
 
-        return -3 * atan2(2 * LENGTH_TRAILER * sin(thetaError),
-                          CoordOperations::magnitude(difference));
-    }
+        float angleTrailerError = atan2(lookaheadDelta.x, lookaheadDelta.y) - angleTrailer;
 
-    float phiDesiredToDelta(float phiDesired) {
-        float dPhiDes = phiDesired - phiDesiredOld;
+        float phiDesired = -3 * atan2(2 * LENGTH_TRAILER * sin(angleTrailerError),
+                                      CoordOperations::magnitude(lookaheadDelta));
+
+        float d_angleTrailer = (angleTrailer - angleTrailerOld) / 2.0f;
+        float d_phiDesired = (phiDesired - phiDesiredOld) / 2.0f;
+        Coord positionTruckDelta = CoordOperations::subtract(positionTruck, positionTruckOld);
+        Coord d_positionTruck = CoordOperations::divide(positionTruckDelta, 2.0f);
+        float velocityTruck = CoordOperations::magnitude(d_positionTruck);
+
+        angleTrailerOld = angleTrailer;
         phiDesiredOld = phiDesired;
-        float dThetaTrailer =
-                (dPositionTrailer.x * sin(thetaTrailer) - dPositionTrailer.y * cos(thetaTrailer)) / LENGTH_TRAILER;
-        float delta = -atan((dThetaTrailer - dPhiDes) * LENGTH_TRUCK / CoordOperations::magnitude(dPositionTrailer));
 
+        float delta = -atan2((d_angleTrailer - d_phiDesired) * LENGTH_TRUCK, velocityTruck);
         return constrain(delta, -DELTA_MAX * PI / 180, DELTA_MAX * PI / 180);
     }
 };
