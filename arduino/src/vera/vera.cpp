@@ -1,7 +1,7 @@
 #include <cmath>
 #include <SPI.h>
 #include <Wire.h>
-#include <Servo.h>
+
 #include <Vector.h>
 
 #include "shared/position.h"
@@ -9,25 +9,16 @@
 #include "shared/magnetic.h"
 #include "shared/motor.h"
 #include "shared/coord.h"
+#include "shared/servoManager.h"
 
-Servo servo;
-int straightTime = 968; // diff 168
-int maxRightTime = 800;
-int maxLeftTime = 1136;
 
 Magnetic magnetic;
+ServoManager servoManager = ServoManager(11);
 Motor motor = Motor(2, 3, 4);
 Position position;
 Vector<Coord> path;
 purePursuitController ppc = purePursuitController(path, 0.2);
 
-/// Get microseconds for servo motor
-/// \param delta steering angle
-/// \return number of microseconds
-int deltaToMs(float delta) {
-    delta = constrain(delta, -0.44078, 0.44078); // ~25 deg in rad
-    return map(delta, -0.44078, 0.44078, maxLeftTime, maxRightTime);
-}
 
 void setup() {
     for (int i = 0; i < 1000; i++) {
@@ -37,11 +28,8 @@ void setup() {
 
     Serial.begin(115200);
     Wire.begin();
-
     magnetic.calibrate();
-
-    servo.attach(11);
-    servo.writeMicroseconds(straightTime);
+    servoManager.writeAngle(0);
 
     delay(3000);
 
@@ -56,7 +44,7 @@ void loop() {
     Coord positionTarget = ppc.getTarget(positionTrailer);
     float delta = position.steeringAngle(positionTrailer, positionTarget);
 
-    servo.writeMicroseconds(deltaToMs(delta));
+    servoManager.writeAngle(delta);
 
     if (ppc.atEnd()) {
         motor.stop();
