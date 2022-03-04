@@ -15,13 +15,20 @@
 #define MOTOR_FIRST_DIR_PIN 2
 #define MOTOR_SECOND_DIR_PIN 3
 #define MOTOR_SPEED_PIN 4
+#define MOTOR_SPEED 125
+
+#define LOOKAHEAD_DISTANCE 0.2
+#define SERIAL_BAUDRATE 115200
+#define ZERO_ANGLE 0
+#define WAKE_DELAY 3000
+#define FRAME_DELAY 15
 
 Magnetic magnetic;
 ServoManager servoManager = ServoManager(SERVO_PIN);
 Motor motor = Motor(MOTOR_FIRST_DIR_PIN, MOTOR_SECOND_DIR_PIN, MOTOR_SPEED_PIN);
 Position position;
 Vector<Coord> path;
-purePursuitController ppc = purePursuitController(path, 0.2);
+purePursuitController ppc = purePursuitController(path, LOOKAHEAD_DISTANCE);
 
 
 void setup() {
@@ -30,15 +37,15 @@ void setup() {
         path.push_back(coord);
     }
 
-    Serial.begin(115200);
+    Serial.begin(SERIAL_BAUDRATE);
     Wire.begin();
     magnetic.calibrate();
-    servoManager.writeAngle(0);
+    servoManager.writeAngle(ZERO_ANGLE);
 
-    delay(3000);
+    delay(WAKE_DELAY);
 
     motor.setForwards();
-    motor.setSpeed(125);
+    motor.setSpeed(MOTOR_SPEED);
 }
 
 void loop() {
@@ -54,5 +61,5 @@ void loop() {
         motor.stop();
     }
 
-    delay(15);
+    delay(FRAME_DELAY);
 }
