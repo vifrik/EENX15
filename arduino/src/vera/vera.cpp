@@ -11,10 +11,14 @@
 #include "shared/coord.h"
 #include "shared/servoManager.h"
 
+#define SERVO_PIN 11
+#define MOTOR_FIRST_DIR_PIN 2
+#define MOTOR_SECOND_DIR_PIN 3
+#define MOTOR_SPEED_PIN 4
 
 Magnetic magnetic;
-ServoManager servoManager = ServoManager(11);
-Motor motor = Motor(2, 3, 4);
+ServoManager servoManager = ServoManager(SERVO_PIN);
+Motor motor = Motor(MOTOR_FIRST_DIR_PIN, MOTOR_SECOND_DIR_PIN, MOTOR_SPEED_PIN);
 Position position;
 Vector<Coord> path;
 purePursuitController ppc = purePursuitController(path, 0.2);
