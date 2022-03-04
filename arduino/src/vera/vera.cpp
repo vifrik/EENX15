@@ -21,22 +21,19 @@ Motor motor = Motor(2, 3, 4);
 
 Position position;
 
-Vector<Coord> path;
+Vector <Coord> path;
 purePursuitController ppc = purePursuitController(path, 0.2);
 
 /// Get microseconds for servo motor
 /// \param delta steering angle
 /// \return number of microseconds
-int deltaToMs(float delta)
-{
+int deltaToMs(float delta) {
     delta = constrain(delta, -0.44078, 0.44078); // ~25 deg in rad
     return map(delta, -0.44078, 0.44078, maxLeftTime, maxRightTime);
 }
 
-void setup()
-{
-    for (int i = 0; i < 1000; i++)
-    {
+void setup() {
+    for (int i = 0; i < 1000; i++) {
         Coord coord = Coord(i / 100.0, sin((i / 100.0) * 500.0 * PI / 180.0));
         path.push_back(coord);
     }
@@ -55,8 +52,7 @@ void setup()
     motor.setSpeed(125);
 }
 
-void loop()
-{
+void loop() {
     float phi = magnetic.readAngle();
 
     Coord positionTrailer = position.getPositionTrailer(phi);
@@ -65,8 +61,7 @@ void loop()
 
     servo.writeMicroseconds(deltaToMs(delta));
 
-    if (ppc.atEnd())
-    {
+    if (ppc.atEnd()) {
         motor.stop();
     }
 

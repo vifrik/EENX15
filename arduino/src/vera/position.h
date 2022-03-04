@@ -12,8 +12,7 @@
 #define LENGTH_TRUCK 0.22
 #define DELTA_MAX 25
 
-class Position
-{
+class Position {
 private:
     Coord positionTruck = Coord(0, 0);
     float angleTrailer = 0;
@@ -25,8 +24,7 @@ private:
 public:
     Position() {}
 
-    Coord getPositionTrailer(float phi)
-    {
+    Coord getPositionTrailer(float phi) {
         positionTruck = Coord(0, 0); // get these two from serial comms
         float angleTruck = 0;
 
@@ -37,8 +35,7 @@ public:
         return positionTrailer;
     }
 
-    float steeringAngle(Coord positionTrailer, Coord positionDesired)
-    {
+    float steeringAngle(Coord positionTrailer, Coord positionDesired) {
         Coord lookaheadDelta = CoordOperations::subtract(positionDesired, positionTrailer);
 
         float angleTrailerError = atan2(lookaheadDelta.x, lookaheadDelta.y) - angleTrailer;

@@ -9,42 +9,33 @@
 #include "Wire.h"
 #include "AS5600.h"
 
-class Magnetic
-{
+class Magnetic {
 private:
     AMS_5600 ams5600;
     float phi0 = 0;
 
-    float convertRawAngleToRad(word angle)
-    {
+    float convertRawAngleToRad(word angle) {
         return angle * 2 * PI / 4095;
     }
 
-    float angleToPhi(float angle, float phiStart)
-    {
+    float angleToPhi(float angle, float phiStart) {
         return angle - phiStart;
     }
 
-    void convertAngle(float &angle)
-    {
-        if (angle > PI)
-        {
+    void convertAngle(float &angle) {
+        if (angle > PI) {
             angle -= -2 * PI;
-        }
-        else if (angle < -PI)
-        {
+        } else if (angle < -PI) {
             angle += 2 * PI;
         }
     }
 
 public:
-    void calibrate()
-    {
+    void calibrate() {
         phi0 = convertRawAngleToRad(ams5600.getRawAngle());
     }
 
-    float readAngle()
-    {
+    float readAngle() {
         float measuredAngle = convertRawAngleToRad(ams5600.getRawAngle());
         measuredAngle = angleToPhi(measuredAngle, phi0);
         convertAngle(measuredAngle);
