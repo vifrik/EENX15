@@ -20,7 +20,7 @@ private:
     Coord positionTruckOld = Coord(0, 0);
     float angleTrailerOld = 0;
     float phiDesiredOld = 0;
-    int timeOld = 0;
+    uint32_t timeOld = 0;
 
 public:
     Position() = default;
@@ -49,7 +49,7 @@ public:
             return 0;
         }
 
-        int timeNow = millis();
+        uint32_t timeNow = millis();
         float deltaTime = (timeNow - timeOld) / 1000.0f; // [s]
 
         float d_angleTrailer = (angleTrailer - angleTrailerOld) / deltaTime;
