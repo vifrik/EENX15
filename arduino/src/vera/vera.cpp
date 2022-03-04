@@ -16,11 +16,8 @@ int maxRightTime = 800;
 int maxLeftTime = 1136;
 
 Magnetic magnetic;
-
 Motor motor = Motor(2, 3, 4);
-
 Position position;
-
 Vector<Coord> path;
 purePursuitController ppc = purePursuitController(path, 0.2);
 

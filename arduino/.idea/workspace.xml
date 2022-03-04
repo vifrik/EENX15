@@ -16,12 +16,7 @@
   <component name="ChangeListManager">
     <list default="true" id="62d93a34-94e8-4553-9641-5e427b9cb0b5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platformio.ini" beforeDir="false" afterPath="$PROJECT_DIR$/platformio.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vera/coord.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/coord.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vera/magnetic.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/magnetic.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vera/motor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/motor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vera/position.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/position.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/vera/purePursuitController.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/purePursuitController.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shared/purePursuitController.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/purePursuitController.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/vera/vera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/vera/vera.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -83,11 +78,11 @@
       <recent name="C:\Users\vikto\Files\Kandidat\kod\arduino\.pio\libdeps\magnet" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\vikto\Files\Kandidat\kod\arduino\src\shared" />
+      <recent name="C:\Users\vikto\Files\Kandidat\kod\arduino\include\shared" />
       <recent name="C:\Users\vikto\Files\Kandidat\kod\arduino\src" />
       <recent name="C:\Users\vikto\Files\Kandidat\kod\arduino\include" />
       <recent name="C:\Users\vikto\Files\Kandidat\kod\arduino\src\vera" />
-      <recent name="C:\Users\vikto\Files\Kandidat\kod\arduino\lib" />
-      <recent name="C:\Users\vikto\Files\Kandidat\kod\arduino\.pio\libdeps\vera" />
     </key>
   </component>
   <component name="RunManager" selected="PlatformIO.PlatformIO Debug">
@@ -131,7 +126,7 @@
       <workItem from="1646352709385" duration="7797000" />
       <workItem from="1646362113313" duration="336000" />
       <workItem from="1646382853614" duration="987000" />
-      <workItem from="1646383956829" duration="441000" />
+      <workItem from="1646383956829" duration="2377000" />
     </task>
     <servers />
   </component>

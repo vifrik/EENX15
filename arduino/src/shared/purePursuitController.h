@@ -21,12 +21,12 @@ private:
     int index = 0;
     bool fromNegative = false;
 
-public:
-    purePursuitController(Vector<Coord> &path, double lookahead) : path(path), lookahead(lookahead) {}
-
     static double calculateDistance(Coord c1, Coord c2) {
         return sqrt(pow(c1.x - c2.x, 2) + pow(c1.y - c2.y, 2));
     }
+
+public:
+    purePursuitController(Vector<Coord> &path, double lookahead) : path(path), lookahead(lookahead) {}
 
     Coord getTarget(Coord position) {
         for (int i = index; i < path.size(); i++) {
