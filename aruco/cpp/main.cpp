@@ -6,7 +6,6 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <math.h>
-#include <string.h>
 
 #include "math.h"
 #include "cvwrapper.h"
@@ -25,7 +24,33 @@
 using namespace cv;
 
 int main(int argc, char **argv) {
+    String markerFilePath;
+    uint32_t baudrate;
+
+    for (int i = 1; i < argc; i++) {
+        if (i != argc - 1) {
+            if (strcmp(argv[i], "--markerfile") == 0 || strcmp(argv[i], "-m") == 0) {
+                markerFilePath = argv[i + 1];
+                i++;
+            } else if (strcmp(argv[i], "--baudrate") == 0 || strcmp(argv[i], "-b") == 0) {
+                try {
+                    baudrate = std::stoi(argv[i + 1], nullptr);
+                } catch (std::exception const &ex) {
+                    std::cerr << "Wrong baudrate format!" << std::endl;
+                    exit(1);
+                }
+                i++;
+            }
+        }
+    }
+
+    if (markerFilePath.empty()) {
+        std::cerr << "Must specify marker file path!" << std::endl;
+        exit(1);
+    }
+    
     cvwrapper c = cvwrapper(0, CAP_ANY);
+
 #ifdef TCP
     tcpclient tcp = tcpclient();
     tcp.connectTo("127.0.0.1", 12000);
