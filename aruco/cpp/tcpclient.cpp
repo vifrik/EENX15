@@ -1,6 +1,7 @@
 //
 // Created by Viktor on 2022-02-22.
 //
+#ifdef TCP
 
 #include "tcpclient.h"
 
@@ -87,3 +88,4 @@ void tcpclient::close(){
     }
     _isClosed = true;
 }
+#endif // TCP

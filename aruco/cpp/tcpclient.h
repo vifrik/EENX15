@@ -1,7 +1,7 @@
 //
 // Created by Viktor on 2022-02-22.
 //
-
+#ifdef TCP
 #ifndef ARUCOCPP_TCPCLIENT_H
 #define ARUCOCPP_TCPCLIENT_H
 
@@ -43,3 +43,4 @@ public:
 
 
 #endif //ARUCOCPP_TCPCLIENT_H
+#endif // TCP
