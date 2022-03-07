@@ -1,7 +1,8 @@
 #include <opencv2/opencv.hpp>
-#include "math.h"
+#include <cmath>
+
+#include "eulerRotation.h"
 #include "writevec.h"
-#include <math.h>
 
 using namespace cv;
 

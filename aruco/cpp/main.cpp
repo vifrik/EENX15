@@ -5,9 +5,9 @@
 #include <opencv2/imgproc.hpp>
 #include <iostream>
 #include <opencv2/opencv.hpp>
-#include <math.h>
+#include <cmath>
 
-#include "math.h"
+#include "eulerRotation.h"
 #include "cvwrapper.h"
 #include "writevec.h"
 
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
         std::cerr << "Must specify marker file path!" << std::endl;
         exit(1);
     }
-    
+
     cvwrapper c = cvwrapper(0, CAP_ANY);
 
 #ifdef TCP
@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
 
                 // translation and rotation vectors relative world
                 Vec3d translation = tCameraWorld.translation();
-                Vec3d rotation = oMath::rotationMatrixToEulerAngles((Mat3d) tCameraWorld.rotation());
+                Vec3d rotation = eulerRotation::rotationMatrixToEulerAngles((Mat3d) tCameraWorld.rotation());
 
                 // 1/distance^2
                 double weight = 1 / pow(pos.tvecs[i][2], 2);

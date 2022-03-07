@@ -5,6 +5,8 @@
 #ifndef ARUCOCPP_CVWRAPPER_H
 #define ARUCOCPP_CVWRAPPER_H
 
+#include <vector>
+#include <iostream>
 #include <opencv2/aruco.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
@@ -26,7 +28,9 @@ private:
             -1.8414740894267736);
 
     void startCapture(int index, int apiPreference = CAP_ANY);
+
     void detect(InputOutputArray &frame);
+
 protected:
 public:
     struct rtvecs {
@@ -35,15 +39,25 @@ public:
     } rtVecs;
 
     cvwrapper(int index, int apiPreference);
+
     void release();
+
     bool readFrame(InputOutputArray &frame);
+
     int numberOfMarkers();
+
     void drawBoundingBoxes(InputOutputArray &frame, Scalar color);
+
     void drawIds(InputOutputArray &frame, Scalar color);
+
     void drawText(InputOutputArray &frame, std::string text, int x, int y);
-    void drawBox(InputOutputArray &frame, Scalar color, int x, int y, int w, int h, int thickness=2);
+
+    void drawBox(InputOutputArray &frame, Scalar color, int x, int y, int w, int h, int thickness = 2);
+
     void drawCircle(InputOutputArray &frame, Scalar color, int x, int y, int r);
+
     void show(InputOutputArray &frame);
+
     rtvecs getLocation();
 
     std::vector<int> markerIds;
