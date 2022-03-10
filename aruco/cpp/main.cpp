@@ -26,7 +26,7 @@
 
 using namespace cv;
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     cvwrapper c = cvwrapper(0, CAP_ANY);
 #ifdef TCP
     tcpclient tcp = tcpclient();
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 #endif
 
     std::vector<Affine3d> markers;
-    FileStorage fs_read("markers.txt",0);
+    FileStorage fs_read("markers.txt", 0);
     writevec::readVectorAffine3d(fs_read, "markers", markers);
     fs_read.release();
 
@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
                 Affine3d tMarkerCamera(objectRotationalMatrix, pos.tvecs[i]);
 
                 // transform for camera relative world
-                Affine3d tCameraWorld = markers[c.markerIds[i]]*tMarkerCamera;
+                Affine3d tCameraWorld = markers[c.markerIds[i]] * tMarkerCamera;
 
                 // translation and rotation vectors relative world
                 Vec3d translation = tCameraWorld.translation();
@@ -90,8 +90,11 @@ int main(int argc, char** argv) {
             sumCameraTranslationalVector /= weightTotal;
             sumCameraRotationalVector /= weightTotal;
 
+            sumCameraRotationalVector(2) += -M_PI / 2; // Make zero rotation in the direction of the x-axis
+
             std::ostringstream os;
-            os << std::fixed << std::setprecision(3) << sumCameraTranslationalVector << "\n" << sumCameraRotationalVector;
+            os << std::fixed << std::setprecision(3) << sumCameraTranslationalVector << "\n"
+               << sumCameraRotationalVector;
             std::string send = os.str();
 
 #ifdef TCP
@@ -101,19 +104,36 @@ int main(int argc, char** argv) {
 #endif
 
 #ifdef DEBUG
-            Scalar col = Scalar(255,53,184); // Red, green, blue color
+            double camX = sumCameraTranslationalVector[0];
+            double camY = sumCameraTranslationalVector[1];
+            double camRZ = sumCameraRotationalVector[2];
+
+            Scalar col = Scalar(255, 53, 184); // Red, green, blue color
             c.drawBoundingBoxes(frame, col); // Draw bounding boxes around all markers
             c.drawIds(frame, col); // Draw id label on marker
             //c.drawText(frame, send, 50, 50);
             c.drawBox(frame, col, 0, 0, 400, 400);
-            c.drawCircle(frame, col, sumCameraTranslationalVector[0]*400/2,
-                         sumCameraTranslationalVector[1]*400/2, 5);
+            c.drawCircle(frame, col, camX * 400 / 2,
+                         camY * 400 / 2, 5);
             std::ostringstream s;
-            s << "X: " << sumCameraTranslationalVector[0]
-            << " Y: " << sumCameraTranslationalVector[1]
-            << " R: " << sumCameraRotationalVector[2];
-            c.drawText(frame, s.str(), sumCameraTranslationalVector[0]*400/2,
-                       sumCameraTranslationalVector[1]*400/2);
+            s << "X: " << camX
+              << " Y: " << camY
+              << " R: " << camRZ;
+            c.drawText(frame, s.str(), camX * 400 / 2,
+                       camY * 400 / 2);
+
+            double xs, ys, rsz;
+            double angleMag = M_PI_4;
+            int lenTrailer = 100;
+            rsz = camRZ + M_PI + angleMag;
+            xs = camX * 400 / 2 + cos(rsz) * lenTrailer;
+            ys = camY * 400 / 2 + sin(rsz) * lenTrailer;
+
+
+            Scalar colTrailer = Scalar(0, 255, 255);
+            c.drawCircle(frame, colTrailer, xs, ys, 5);
+            ellipse(frame, Point(camX * 400 / 2, camY * 400 / 2), Point(50, 50), 0,
+                    (camRZ + M_PI) * 180 / M_PI, rsz * 180 / M_PI, colTrailer, 2);
 
 #endif
         }
