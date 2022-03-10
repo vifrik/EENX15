@@ -48,6 +48,7 @@ Xd  = LookDistance.*cos(circle);
 Yd  = LookDistance.*sin(circle);
 targetPts = patch(Xd,Yd,'black','facecolor','none','edgecolor','green');
 [xy,distance,t_a]=distance2curve([X_waypoints' Y_waypoints'],[X2 Y2]);
+%[xy,distance,t_a]=distance2curve([X_waypoints' Y_waypoints'],[X1 Y1]);
 medel_dist=100*mean(distance);
 rms_dist=100*sqrt(mean(distance.^2));
 max_dist=100*max(distance);

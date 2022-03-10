@@ -1,7 +1,7 @@
 %% %%% Test case definiton %%%%%%%%%%%%%%%%%%%%%%%% %%
     close all;clc;clear all;
-    path = 'Parkering_2';  %'Rak bana'  'Stor kurva' 'Skarp kurva' 'Sinusvåg' 
-    desiredSpeed = -.5;  % Longitudinal Speed [m/s]
+    path = 'Test';  %'Rak bana'  'Stor kurva' 'Skarp kurva' 'Sinusvåg' 
+    desiredSpeed = -10;  % Longitudinal Speed [m/s]
     LookDistance  = 0.4; %Look-ahead distance, bra värden; 0.375, 0.4, 0.4
 %% %%% Vehicle parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     mm = 1e-3; %mm to m conversion
@@ -14,6 +14,21 @@
 %% %%%%%%%% Waypoints %%%%%%%%%%%%%
 % creating the trajectory
 switch path
+
+case 'Test'
+    D1 = -5;
+    n = 100;
+    roadWidth = 0.2;
+    X_waypoints = linspace(0,D1,n);
+    X_waypointsUp = linspace(0,D1,n);
+    X_waypointsLow = linspace(0,D1,n);
+
+    Y_waypoints = zeros(1,n);
+    Y_waypointsUp = roadWidth.*ones(1,n);
+    Y_waypointsLow = -roadWidth.*ones(1,n);
+
+    plot(X_waypoints, Y_waypoints)
+
 case 'Rak bana'
 %----------------Rak bana----------------
     n = 20000;
@@ -76,7 +91,7 @@ case 'Stor kurva'
     X_waypointsUp(16001:20000) = -(3+R-roadWidth);
     X_waypointsLow(16001:20000) = -(3+R+roadWidth);
     
-    X_waypoints = -1.*X_waypoints;
+    %X_waypoints = -1.*X_waypoints;
 
     plot(X_waypoints,Y_waypoints,'b--')
 %----------------Skarp kurva----------------
@@ -151,61 +166,49 @@ case 'Parkering_2'
     n = 250; % Upplösning
 
     %% L1
-    X_waypoints_1 = linspace(0,L1,n*3);
+    X_waypoints = linspace(0,L1,n);
     X_waypointsUp = linspace(0,L1,n);
     X_waypointsLow = linspace(0,L1,n);
 
-    Y_waypoints_1 = zeros(1,n*3);
+    Y_waypoints = zeros(1,n);
     Y_waypointsUp = roadWidth.*ones(1,n);
     Y_waypointsLow = -roadWidth.*ones(1,n);
 
     %% L2
-    X_waypoints_2 = linspace(L1, L1-L2, n);
+    X_waypoints = [X_waypoints, linspace(L1, L1-L2, n)];
     X_waypointsUp = [X_waypointsUp,linspace(L1, L1-L2, n)];
     X_waypointsLow = [X_waypointsLow,linspace(L1, L1-L2, n)];
 
-    Y_waypoints_2 = zeros(1,n);
+    Y_waypoints = [Y_waypoints, zeros(1,n)];
     Y_waypointsUp = [Y_waypointsUp, roadWidth.*ones(1,n)];
     Y_waypointsLow = [Y_waypointsLow, -roadWidth.*ones(1,n)];
 
     %% R1
-    X_waypoints_2 = [X_waypoints_2, L1-L2 + R1.*cos(linspace(pi/2,pi,n))];
+    X_waypoints = [X_waypoints, L1-L2 + R1.*cos(linspace(pi/2,pi,n))];
     X_waypointsUp = [X_waypointsUp, (L1-L2 + (R1+roadWidth).*cos(linspace(pi/2,pi,n)))];
     X_waypointsLow = [X_waypointsLow, L1-L2 + (R1-roadWidth).*cos(linspace(pi/2,pi,n))];
 
-    Y_waypoints_2 = [Y_waypoints_2, R1.*sin(linspace(pi/2,pi,n))-R1];
+    Y_waypoints = [Y_waypoints, R1.*sin(linspace(pi/2,pi,n))-R1];
     Y_waypointsUp = [Y_waypointsUp, (R1+roadWidth).*sin(linspace(pi/2,pi,n))-R1];
     Y_waypointsLow = [Y_waypointsLow, (R1-roadWidth).*sin(linspace(pi/2,pi,n))-R1];
 
 
     %% L3
-    X_waypoints_2 = [X_waypoints_2, linspace(L1-L2-R1, L1-L2-R1, n)];
+    X_waypoints = [X_waypoints, linspace(L1-L2-R1, L1-L2-R1, n)];
     X_waypointsUp = [X_waypointsUp, linspace(L1-L2-R1-roadWidth, L1-L2-R1-roadWidth, n)];
     X_waypointsLow = [X_waypointsLow, linspace(L1-L2-R1+roadWidth, L1-L2-R1+roadWidth, n)];
 
-    Y_waypoints_2 = [Y_waypoints_2, linspace(-R1,-R1-L3,n)];
+    Y_waypoints = [Y_waypoints, linspace(-R1,-R1-L3,n)];
     Y_waypointsUp = [Y_waypointsUp, linspace(-R1,-R1-L3,n)];
     Y_waypointsLow = [Y_waypointsLow, linspace(-R1,-R1-L3,n)];
 
     %X_waypoints = -1.*X_waypoints;
     %X_waypointsUp = -1.*X_waypointsUp;
     %X_waypointsLow = -1.*X_waypointsLow;
-    
-    X_waypoints_1 = -1.*X_waypoints_1;
-    X_waypoints_2 = -1.*X_waypoints_2;
 
-    Y_waypoints_1 = -1.*Y_waypoints_1;
-    Y_waypoints_2 = -1.*Y_waypoints_2;
-
-    Index = 1;
-
-    figure(1)
-    plot(X_waypoints_1,Y_waypoints_1,'b--')
-    title('Forward')
-    figure(2)
-    plot(X_waypoints_2,Y_waypoints_2,'b--')
-    title('Reverse')
-    %plot(X_waypointsUp, Y_waypointsUp,'k')
-    %plot(X_waypointsLow, Y_waypointsLow,'k')
+    plot(X_waypoints,Y_waypoints,'b--')
+    hold on
+    plot(X_waypointsUp, Y_waypointsUp,'k')
+    plot(X_waypointsLow, Y_waypointsLow,'k')
 
 end
