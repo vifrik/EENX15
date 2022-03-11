@@ -27,11 +27,11 @@ void setup()
 
 void loop()
 {
-    byte bytesBuffer[20]; // 13 should be enough
+    byte bytesBuffer[13]; // 4 bytes * 3 floats + null terminator, 4+4+4+1 = 13
     int size = Serial.readBytesUntil(byte(0), bytesBuffer, 13);
 
     memcpy(&positionData, bytesBuffer, 12);
 
     // servo.write((rz + 3.14 / 2) * 180 / 3.14);
-    servo.write(positionData.y * 90);
+    servo.write(positionData.x * 90);
 }
