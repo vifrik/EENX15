@@ -12,8 +12,13 @@
 #include "writevec.h"
 
 #ifdef SERIAL
-#include <unistd.h>  // UNIX standard function definitions
-#include <fcntl.h>   // file control
+
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <termios.h>
+
+int fd;
 #endif
 
 #ifdef TCP
@@ -57,17 +62,24 @@ int main(int argc, char **argv) {
 #endif
 
 #ifdef SERIAL
-    int fileDescriptor;
-
-    fileDescriptor = open("/dev/ttyf1", O_RDWR | O_NOCTTY | O_NDELAY);
-    if (fileDescriptor < 0) {
-        std::cerr << "Unable to open port /dev/ttyf1";
+    // Open port
+    fd = open("/dev/tty.usbmodem14401", O_RDWR | O_NOCTTY | O_NDELAY);
+    if (fd == -1) {
+        printf("Device cannot be opened.\n");
+        exit(-1);
     }
-    fcntl(fileDescriptor, F_SETFL, 0);
 
-    int bytesWritten = write(fileDescriptor, "ATZ\r", 4);
-    if (bytesWritten < 0)
-        std::cerr << "Write failed";
+    struct termios options;
+    tcgetattr(fd, &options);                        // Get the current options of the port
+    options.c_cflag = B9600 | CLOCAL | CREAD | CS8; // Configure the device : 8 bits, no parity, no control
+    options.c_iflag = IGNPAR;
+    options.c_cc[VTIME] = 0;
+    options.c_cc[VMIN] = 0;
+    tcflush(fd, TCIFLUSH);
+    if (tcsetattr(fd, TCSANOW, &options) < 0) {
+        printf("Error setting serial port attributes!\n");
+        exit(-1);
+    }
 #endif
 
     std::vector<Affine3d> markers;
@@ -124,6 +136,15 @@ int main(int argc, char **argv) {
             char char_array[send.length() + 1];
             strcpy(char_array, send.c_str());
             tcp.sendMsg(char_array, sizeof char_array);
+#endif
+
+#ifdef SERIAL
+
+            String out = std::to_string((float) sumCameraRotationalVector[2]);
+            char char_array[out.length() + 1];
+            strcpy(char_array, out.c_str());
+
+            write(fd, char_array, sizeof char_array);
 #endif
 
 #ifdef DEBUG
