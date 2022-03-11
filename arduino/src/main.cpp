@@ -1,16 +1,16 @@
-#include <ArduinoSerialProtocol.h>
+#include <SPI.h>
+#include <Wire.h>
 #include <Servo.h>
 
 #include "shared/servoManager.h"
 
 // The payload that will be sent to the other device
-struct __attribute__((packed)) SamplePayload
+struct PositionData
 {
-    uint64_t B;
-} payload;
-
-ArduinoSerialProtocol protocol(&Serial, (uint8_t *)&payload, sizeof(payload));
-uint8_t receiveState;
+    float x;
+    float y;
+    float rz;
+} positionData;
 
 // ServoManager servoManager = ServoManager(11);
 Servo servo;
@@ -18,7 +18,6 @@ Servo servo;
 void setup()
 {
     Serial.begin(9600);
-    payload.B = 0;
 
     servo.attach(11);
     servo.write(90);
@@ -31,10 +30,8 @@ void loop()
     byte bytesBuffer[20]; // 13 should be enough
     int size = Serial.readBytesUntil(byte(0), bytesBuffer, 13);
 
-    float x, y, rz;
-    memcpy(&x, bytesBuffer, 4);
-    memcpy(&y, bytesBuffer + 4, 4);
-    memcpy(&rz, bytesBuffer + 8, 4);
+    memcpy(&positionData, bytesBuffer, 12);
 
-    servo.write((rz + 3.14 / 2) * 180 / 3.14);
+    // servo.write((rz + 3.14 / 2) * 180 / 3.14);
+    servo.write(positionData.y * 90);
 }
