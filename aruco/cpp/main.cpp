@@ -21,11 +21,6 @@
 int fd;
 #endif
 
-#ifdef TCP
-#include "tcpclient.h"
-#endif
-
-
 using namespace cv;
 
 int main(int argc, char **argv) {
@@ -55,11 +50,6 @@ int main(int argc, char **argv) {
     }
 
     cvwrapper c = cvwrapper(0, CAP_ANY);
-
-#ifdef TCP
-    tcpclient tcp = tcpclient();
-    tcp.connectTo("127.0.0.1", 12000);
-#endif
 
 #ifdef SERIAL
     // Open port
@@ -131,12 +121,6 @@ int main(int argc, char **argv) {
             os << std::fixed << std::setprecision(3) << sumCameraTranslationalVector << "\n"
                << sumCameraRotationalVector;
             std::string send = os.str();
-
-#ifdef TCP
-            char char_array[send.length() + 1];
-            strcpy(char_array, send.c_str());
-            tcp.sendMsg(char_array, sizeof char_array);
-#endif
 
 #ifdef SERIAL
             char char_array[13]; // 4 bytes * 3 floats + null terminator, 4+4+4+1 = 13
