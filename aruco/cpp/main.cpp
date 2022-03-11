@@ -139,10 +139,15 @@ int main(int argc, char **argv) {
 #endif
 
 #ifdef SERIAL
+            char char_array[13]; // 4 bytes * 3 floats + null terminator, 4+4+4+1 = 13
+            float x = sumCameraTranslationalVector[0];
+            float y = sumCameraTranslationalVector[1];
+            float rz = sumCameraRotationalVector[2];
 
-            String out = std::to_string((float) sumCameraRotationalVector[2]);
-            char char_array[out.length() + 1];
-            strcpy(char_array, out.c_str());
+            memcpy(char_array, &x, 4);
+            memcpy(char_array + 4, &y, 4);
+            memcpy(char_array + 8, &rz, 4);
+            char_array[12] = '\0'; // null terminator
 
             write(fd, char_array, sizeof char_array);
 #endif

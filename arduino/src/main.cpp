@@ -28,8 +28,13 @@ void setup()
 
 void loop()
 {
-    String s = Serial.readStringUntil(byte(0));
-    double rotZ = s.toDouble();
+    byte bytesBuffer[20]; // 13 should be enough
+    int size = Serial.readBytesUntil(byte(0), bytesBuffer, 13);
 
-    servo.write((rotZ + 3.14 / 2) * 180 / 3.14);
+    float x, y, rz;
+    memcpy(&x, bytesBuffer, 4);
+    memcpy(&y, bytesBuffer + 4, 4);
+    memcpy(&rz, bytesBuffer + 8, 4);
+
+    servo.write((rz + 3.14 / 2) * 180 / 3.14);
 }
