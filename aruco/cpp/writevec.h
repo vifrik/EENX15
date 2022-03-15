@@ -14,24 +14,23 @@ namespace writevec {
     void writeVectorAffine3d(FileStorage &fs, std::string name, std::vector<Affine3d> &data) {
         fs << name;
         fs << "{";
-        for (int i = 0; i < data.size(); i++)
-        {
+        for (int i = 0; i < data.size(); i++) {
             fs << name + "_" + std::to_string(i);
             Affine3d a = data[i];
             fs << a.matrix;
         }
         fs << "}";
     }
+
     void readVectorAffine3d(FileStorage &fns, std::string name, std::vector<Affine3d> &data) {
         data.clear();
         FileNode fn = fns[name];
-        if (fn.empty()){
+        if (fn.empty()) {
             return;
         }
 
         FileNodeIterator current = fn.begin(), it_end = fn.end();
-        for (; current != it_end; ++current)
-        {
+        for (; current != it_end; ++current) {
             Affine3d a;
             Mat b;
 

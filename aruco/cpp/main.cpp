@@ -25,20 +25,11 @@ using namespace cv;
 
 int main(int argc, char **argv) {
     String markerFilePath;
-    uint32_t baudrate;
 
     for (int i = 1; i < argc; i++) {
         if (i != argc - 1) {
             if (strcmp(argv[i], "--markerfile") == 0 || strcmp(argv[i], "-m") == 0) {
                 markerFilePath = argv[i + 1];
-                i++;
-            } else if (strcmp(argv[i], "--baudrate") == 0 || strcmp(argv[i], "-b") == 0) {
-                try {
-                    baudrate = std::stoi(argv[i + 1], nullptr);
-                } catch (std::exception const &ex) {
-                    std::cerr << "Wrong baudrate format!" << std::endl;
-                    exit(1);
-                }
                 i++;
             }
         }
@@ -105,6 +96,7 @@ int main(int argc, char **argv) {
                 Vec3d rotation = eulerRotation::rotationMatrixToEulerAngles((Mat3d) tCameraWorld.rotation());
 
                 // 1/distance^2
+                // this is wrong, should be distance, instead it is only z
                 double weight = 1 / pow(pos.tvecs[i][2], 2);
                 sumCameraTranslationalVector += weight * translation;
                 sumCameraRotationalVector += weight * rotation;
@@ -115,12 +107,7 @@ int main(int argc, char **argv) {
             sumCameraTranslationalVector /= weightTotal;
             sumCameraRotationalVector /= weightTotal;
 
-            sumCameraRotationalVector(2) += -M_PI / 2; // Make zero rotation in the direction of the x-axis
-
-            std::ostringstream os;
-            os << std::fixed << std::setprecision(3) << sumCameraTranslationalVector << "\n"
-               << sumCameraRotationalVector;
-            std::string send = os.str();
+            sumCameraRotationalVector(2) += -M_PI_2; // Make zero rotation in the direction of the x-axis
 
 #ifdef SERIAL
             char char_array[13]; // 4 bytes * 3 floats + null terminator, 4+4+4+1 = 13
@@ -144,7 +131,6 @@ int main(int argc, char **argv) {
             Scalar col = Scalar(255, 53, 184); // Red, green, blue color
             c.drawBoundingBoxes(frame, col); // Draw bounding boxes around all markers
             c.drawIds(frame, col); // Draw id label on marker
-            //c.drawText(frame, send, 50, 50);
             c.drawBox(frame, col, 0, 0, 400, 400);
             c.drawCircle(frame, col, camX * 400 / 2,
                          camY * 400 / 2, 5);
@@ -154,20 +140,6 @@ int main(int argc, char **argv) {
               << " R: " << camRZ;
             c.drawText(frame, s.str(), camX * 400 / 2,
                        camY * 400 / 2);
-
-            double xs, ys, rsz;
-            double angleMag = M_PI_4;
-            int lenTrailer = 100;
-            rsz = camRZ + M_PI + angleMag;
-            xs = camX * 400 / 2 + cos(rsz) * lenTrailer;
-            ys = camY * 400 / 2 + sin(rsz) * lenTrailer;
-
-
-            Scalar colTrailer = Scalar(0, 255, 255);
-            c.drawCircle(frame, colTrailer, xs, ys, 5);
-            ellipse(frame, Point(camX * 400 / 2, camY * 400 / 2), Point(50, 50), 0,
-                    (camRZ + M_PI) * 180 / M_PI, rsz * 180 / M_PI, colTrailer, 2);
-
 #endif
         }
 #ifdef DEBUG
