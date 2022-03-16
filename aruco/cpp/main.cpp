@@ -95,9 +95,8 @@ int main(int argc, char **argv) {
                 Vec3d translation = tCameraWorld.translation();
                 Vec3d rotation = eulerRotation::rotationMatrixToEulerAngles((Mat3d) tCameraWorld.rotation());
 
-                // 1/distance^2
-                // this is wrong, should be distance, instead it is only z
-                double weight = 1 / pow(pos.tvecs[i][2], 2);
+                // 1/(dx^2 * dy^3 * dz^3)
+                double weight = 1 / 1 / (pow(pos.tvecs[i][2], 2) * pow(pos.tvecs[i][0], 3) * pow(pos.tvecs[i][1], 3));
                 sumCameraTranslationalVector += weight * translation;
                 sumCameraRotationalVector += weight * rotation;
                 weightTotal += weight;
