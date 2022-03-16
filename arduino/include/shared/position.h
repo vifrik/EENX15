@@ -37,12 +37,12 @@ public:
     }
 
     float steeringAngle(Coord positionTrailer, Coord positionDesired) {
-        Coord lookaheadDelta = CoordOperations::subtract(positionDesired, positionTrailer);
+        Coord lookaheadDelta = positionDesired - positionTrailer;
 
         float angleTrailerError = atan2(lookaheadDelta.x, lookaheadDelta.y) - angleTrailer;
 
         float phiDesired = -3 * atan2(2 * LENGTH_TRAILER * sin(angleTrailerError),
-                                      CoordOperations::magnitude(lookaheadDelta));
+                                      lookaheadDelta.magnitude();
 
         if (timeOld == 0) {
             timeOld = millis();
@@ -54,11 +54,10 @@ public:
 
         float d_angleTrailer = (angleTrailer - angleTrailerOld) / deltaTime;
         float d_phiDesired = (phiDesired - phiDesiredOld) / deltaTime;
-        Coord positionTruckDelta = CoordOperations::subtract(positionTruck, positionTruckOld);
-        Coord d_positionTruck = CoordOperations::divide(positionTruckDelta, deltaTime);
-        float velocityTruck = CoordOperations::magnitude(d_positionTruck);
+        Coord positionTruckDelta = positionTruck - positionTruckOld;
+        Coord d_positionTruck = positionTruckDelta / deltaTime;
+        float velocityTruck = d_positionTruck.magnitude();
 
-        millis();
         angleTrailerOld = angleTrailer;
         phiDesiredOld = phiDesired;
         timeOld = timeNow;

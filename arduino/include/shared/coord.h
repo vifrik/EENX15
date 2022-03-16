@@ -1,6 +1,7 @@
 //
 // Created by vikto on 2022-03-04.
 //
+#include <cmath>
 
 #ifndef ARDUINO_COORD_H
 #define ARDUINO_COORD_H
@@ -10,20 +11,17 @@ struct Coord {
     float y;
 
     Coord(float x, float y) : x(x), y(y) {};
-};
 
-class CoordOperations {
-public:
-    static Coord subtract(Coord first, Coord second) {
-        return Coord(first.x - second.x, first.y - second.y);
+    float magnitude() {
+        return sqrt(pow(x, 2) + pow(y, 2));
     }
 
-    static Coord divide(Coord first, float divisor) {
-        return Coord(first.x / divisor, first.y / divisor);
+    Coord operator-(const Coord& o) {
+        return Coord(x - o.x, y - o.y);
     }
 
-    static float magnitude(Coord coord) {
-        return sqrt(pow(coord.x, 2) + pow(coord.y, 2));
+    Coord operator/(const float d) {
+        return Coord(x / d, y / d);
     }
 };
 
