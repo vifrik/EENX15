@@ -40,14 +40,8 @@ void cvwrapper::detect(InputOutputArray &frame) {
 }
 
 void cvwrapper::drawBoundingBoxes(InputOutputArray &frame, Scalar color) {
+    aruco::drawDetectedMarkers(frame, markerCorners, noArray(), color);
     for (int i = 0; i < markerIds.size(); i++) {
-        std::vector<Point2f> corners = markerCorners[i]; // Get current corners of tag with id, id
-
-        // Draw bounding box around tag
-        for (int j = 0; j < 4; j++) {
-            line(frame, corners[j], corners[(j + 1) % 4], color, 2, LINE_8);
-        }
-
         aruco::drawAxis(frame, cameraMatrix, distCoeffs, rtVecs.rvecs[i], rtVecs.tvecs[i], 0.05);
     }
 }
