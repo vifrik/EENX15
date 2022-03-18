@@ -44,8 +44,8 @@ int main(int argc, char **argv) {
 
 #ifdef SERIAL
     // Open port
-    fd = open("/dev/tty.usbmodem14401", O_RDWR | O_NOCTTY | O_NDELAY);
-    if (fd == -1) {
+    fd = open(SERIAL_PORT, O_RDWR | O_NOCTTY | O_NDELAY);
+if (fd == -1) {
         printf("Device cannot be opened.\n");
         exit(-1);
     }
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
             sumCameraRotationalVector /= weightTotal;
 
             sumCameraRotationalVector(2) += -M_PI_2; // Make zero rotation in the direction of the x-axis
-
+	    std::cout << sumCameraTranslationalVector[0] << std::endl;
 #ifdef SERIAL
             char char_array[13]; // 4 bytes * 3 floats + null terminator, 4+4+4+1 = 13
             float x = sumCameraTranslationalVector[0];
