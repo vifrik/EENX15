@@ -110,12 +110,9 @@ if (fd == -1) {
 	    std::cout << sumCameraTranslationalVector[0] << std::endl;
 #ifdef SERIAL
             char char_array[13]; // 4 bytes * 3 floats + null terminator, 4+4+4+1 = 13
-            float x = sumCameraTranslationalVector[0];
-            float y = sumCameraTranslationalVector[1];
             float rz = sumCameraRotationalVector[2];
 
-            memcpy(char_array, &x, 4);
-            memcpy(char_array + 4, &y, 4);
+            memcpy(char_array, &sumCameraTranslationalVector[0], 8);
             memcpy(char_array + 8, &rz, 4);
             char_array[12] = '\0'; // null terminator
 
