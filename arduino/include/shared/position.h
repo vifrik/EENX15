@@ -42,7 +42,7 @@ public:
         float angleTrailerError = atan2(lookaheadDelta.x, lookaheadDelta.y) - angleTrailer;
 
         float phiDesired = -3 * atan2(2 * LENGTH_TRAILER * sin(angleTrailerError),
-                                      lookaheadDelta.magnitude();
+                                      lookaheadDelta.magnitude());
 
         if (timeOld == 0) {
             timeOld = millis();
