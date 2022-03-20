@@ -8,8 +8,8 @@
 #include <cmath>
 #include "coord.h"
 
-#define CAMERA_OFFSET 0.1
-#define LENGTH_TRUCK 0.4
+#define CAMERA_OFFSET 0.15
+#define LENGTH_TRUCK 0.15
 
 class Position
 {
@@ -27,23 +27,25 @@ public:
     Position() = default;
 
     float steeringAngle(Coord positionTrailer, Coord positionDesired, float rz)
-    {
-        positionRotationalCenter.x = cos(rz + PI) * CAMERA_OFFSET;
-        positionRotationalCenter.y = sin(rz + PI) * CAMERA_OFFSET;
-        
-        Coord lookaheadDelta = positionDesired - positionRotationalCenter;
+    {        
+        Coord lookaheadDelta = positionDesired - positionTrailer;
+        Serial.print(positionDesired.x - positionTrailer.x);
+        Serial.print(" ");
+        Serial.println(positionDesired.y - positionTrailer.y);
+        return atan2(positionDesired.y - positionTrailer.y, positionDesired.x - positionTrailer.x) * 180 / PI;
 
-        float angleTrailerError = atan2(lookaheadDelta.y, lookaheadDelta.x) + rz * PI / 180;
 
-        float phiDesired = -3 * atan2(2 * LENGTH_TRUCK * sin(angleTrailerError),
+        float angleTrailerError = atan2(lookaheadDelta.y, lookaheadDelta.x) + (rz + PI);
+
+        float phiDesired = -atan2(2 * LENGTH_TRUCK * sin(-angleTrailerError),
                                       lookaheadDelta.magnitude());
 
-        Serial.print("dy: ");
+        /*Serial.print("dy: ");
         Serial.print(lookaheadDelta.y);
         Serial.print(" theta_err: ");
         Serial.print(angleTrailerError);
         Serial.print(" delta: ");
-        Serial.println(phiDesired);
+        Serial.println(phiDesired);*/
 
         return phiDesired*180/PI;
     }

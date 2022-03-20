@@ -24,8 +24,13 @@ int main(int argc, char **argv) {
     Affine3d marker3(eulerRotation::eulerAnglesToRotationMatrix(r3), t3);
     markers.push_back(marker3);
 
-    Vec3d r4(-M_PI_2, 0, M_PI_2);
-    Vec3d t4(2.0, 1.0, 0);
+//    Vec3d r4(-M_PI_2, 0, M_PI_2);
+//    Vec3d t4(2.0, 1.0, 0);
+//    Affine3d marker4(eulerRotation::eulerAnglesToRotationMatrix(r4), t4);
+//    markers.push_back(marker4);
+
+    Vec3d r4(-M_PI_2, 0, 0);
+    Vec3d t4(0, 0, 0);
     Affine3d marker4(eulerRotation::eulerAnglesToRotationMatrix(r4), t4);
     markers.push_back(marker4);
 

@@ -10,7 +10,7 @@
 #define STRAIGHT_TIME 968
 #define MAX_RIGHT_TIME STRAIGHT_TIME + 168
 #define MAX_LEFT_TIME STRAIGHT_TIME - 168
-#define MAX_ANGLE 25
+#define MAX_ANGLE 6
 
 class ServoManager {
 private:

@@ -107,12 +107,12 @@ if (fd == -1) {
             sumCameraRotationalVector /= weightTotal;
 
             sumCameraRotationalVector(2) += -M_PI_2; // Make zero rotation in the direction of the x-axis
-	    std::cout << sumCameraTranslationalVector[0] << std::endl;
+            //std::cout << sumCameraTranslationalVector[0] << " " << sumCameraTranslationalVector[1] << std::endl;
 #ifdef SERIAL
             char char_array[13]; // 4 bytes * 3 floats + null terminator, 4+4+4+1 = 13
             float rz = sumCameraRotationalVector[2];
 
-            memcpy(char_array, &sumCameraTranslationalVector[0], 8);
+            memcpy(char_array, sumCameraTranslationalVector, 8);
             memcpy(char_array + 8, &rz, 4);
             char_array[12] = '\0'; // null terminator
 
