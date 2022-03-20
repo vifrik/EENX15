@@ -26,7 +26,7 @@ private:
 
 public:
     purePursuitController() {
-        //targetCandidates.setStorage(targets);
+        targetCandidates.setStorage(targets);
     }
     Coord getTarget(Vector<Coord> &path, double lookahead, Coord position) {
         // Serial.print("PPC data:: path.size(): ");
