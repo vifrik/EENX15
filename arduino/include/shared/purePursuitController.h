@@ -11,13 +11,11 @@
 
 #include "shared/coord.h"
 
-#define MAX_STEPS 100
+#define MAX_STEPS 1000
 
 class purePursuitController {
 private:
-    Vector<Coord> &path;
     Vector<int> targetCandidates;
-    double lookahead;
     int index = 0;
     bool fromNegative = false;
 
@@ -26,9 +24,11 @@ private:
     }
 
 public:
-    purePursuitController(Vector<Coord> &path, double lookahead) : path(path), lookahead(lookahead) {}
-
-    Coord getTarget(Coord position) {
+    Coord getTarget(Vector<Coord> &path, double lookahead, Coord position) {
+        /*Serial.print("PPC data:: path.size(): ");
+        Serial.print(path.size());
+        Serial.print(" index: ");
+        Serial.println(index);*/
         for (int i = index; i < path.size(); i++) {
             Coord current = path.at(i);
             double distance = calculateDistance(position, current);

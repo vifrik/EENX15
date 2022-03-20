@@ -10,7 +10,7 @@
 #define STRAIGHT_TIME 968
 #define MAX_RIGHT_TIME STRAIGHT_TIME + 168
 #define MAX_LEFT_TIME STRAIGHT_TIME - 168
-#define MAX_ANGLE 25*PI/180
+#define MAX_ANGLE 25
 
 class ServoManager {
 private:
@@ -20,7 +20,7 @@ private:
     /// \param delta steering angle
     /// \return number of microseconds
     int deltaToMs(float delta) {
-        delta = constrain(delta, -MAX_ANGLE, MAX_ANGLE); // ~25 deg in rad
+        delta = constrain(delta, -MAX_ANGLE, MAX_ANGLE);
         return map(delta, -MAX_ANGLE, MAX_ANGLE, MAX_LEFT_TIME, MAX_RIGHT_TIME);
     }
 

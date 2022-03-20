@@ -8,14 +8,14 @@
 #include <cmath>
 #include "coord.h"
 
-#define LENGTH_TRAILER 1.16
-#define LENGTH_TRUCK 0.22
-#define DELTA_MAX 25
+#define CAMERA_OFFSET 0.1
+#define LENGTH_TRUCK 0.4
 
 class Position
 {
 private:
     Coord positionTruck = Coord(0, 0);
+    Coord positionRotationalCenter = Coord(0, 0);
     float angleTrailer = 0;
 
     Coord positionTruckOld = Coord(0, 0);
@@ -26,15 +26,26 @@ private:
 public:
     Position() = default;
 
-    float steeringAngle(Coord positionTrailer, Coord positionDesired)
+    float steeringAngle(Coord positionTrailer, Coord positionDesired, float rz)
     {
-        Coord lookaheadDelta = positionDesired - positionTrailer;
+        positionRotationalCenter.x = cos(rz + PI) * CAMERA_OFFSET;
+        positionRotationalCenter.y = sin(rz + PI) * CAMERA_OFFSET;
+        
+        Coord lookaheadDelta = positionDesired - positionRotationalCenter;
 
-        float angleTrailerError = atan2(lookaheadDelta.x, lookaheadDelta.y) - angleTrailer;
+        float angleTrailerError = atan2(lookaheadDelta.y, lookaheadDelta.x) + rz * PI / 180;
 
-        float phiDesired = -3 * atan2(2 * LENGTH_TRAILER * sin(angleTrailerError),
+        float phiDesired = -3 * atan2(2 * LENGTH_TRUCK * sin(angleTrailerError),
                                       lookaheadDelta.magnitude());
-        return constrain(phiDesired, -DELTA_MAX * PI / 180, DELTA_MAX * PI / 180);
+
+        Serial.print("dy: ");
+        Serial.print(lookaheadDelta.y);
+        Serial.print(" theta_err: ");
+        Serial.print(angleTrailerError);
+        Serial.print(" delta: ");
+        Serial.println(phiDesired);
+
+        return phiDesired*180/PI;
     }
 };
 

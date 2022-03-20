@@ -1,7 +1,6 @@
 #include <cmath>
 #include <SPI.h>
 #include <Wire.h>
-
 #include <Vector.h>
 
 #include "shared/positionDolly.h"
@@ -17,8 +16,8 @@
 #define MOTOR_SPEED_PIN 4
 #define MOTOR_SPEED 125
 
-#define LOOKAHEAD_DISTANCE 0.2
-#define SERIAL_BAUDRATE 115200
+#define LOOKAHEAD_DISTANCE 0.5
+#define SERIAL_BAUDRATE 9600
 #define ZERO_ANGLE 0
 #define WAKE_DELAY 3000
 #define FRAME_DELAY 15
@@ -34,22 +33,27 @@ ServoManager servoManager = ServoManager(SERVO_PIN);
 Motor motor = Motor(MOTOR_FIRST_DIR_PIN, MOTOR_SECOND_DIR_PIN, MOTOR_SPEED_PIN);
 Position position;
 Vector<Coord> path;
-purePursuitController ppc = purePursuitController(path, LOOKAHEAD_DISTANCE);
+Coord coords[1000];
+purePursuitController ppc;
 
 
 void setup() {
-    for (int i = 0; i < 1000; i++) {
-        Coord coord = Coord(i / 100.0, sin((i / 100.0) * 500.0 * PI / 180.0));
+    path.setStorage(coords);
+    for (int i = 150; i < 850; i++) {
+        Coord coord = Coord(i / 500.0, 1);
         path.push_back(coord);
     }
 
-    SerialUSB.begin(SERIAL_BAUDRATE);
+    Serial.begin(SERIAL_BAUDRATE); // host communication
+    SerialUSB.begin(SERIAL_BAUDRATE); // jetson nano communication
     Wire.begin();
     servoManager.writeAngle(ZERO_ANGLE);
 
+    Serial.println(path.size());
+
     delay(WAKE_DELAY);
 
-    motor.setForwards();
+    motor.setBackwards();
     motor.setSpeed(MOTOR_SPEED);
 }
 
@@ -58,16 +62,37 @@ void loop() {
     int size = SerialUSB.readBytesUntil(byte(0), bytesBuffer, 13);
 
     memcpy(&positionData, bytesBuffer, 12);
+
+    //Serial.println("######## BEGIN ########");
     
     Coord positionTrailer = Coord(positionData.x, positionData.y); // update with camera pose
-    Coord positionTarget = ppc.getTarget(positionTrailer);
-    float delta = position.steeringAngle(positionTrailer, positionTarget);
+    Coord positionTarget = ppc.getTarget(path, LOOKAHEAD_DISTANCE, positionTrailer);
 
+    /*
+    Serial.print("Position data:: x:");
+    Serial.print(positionTrailer.x);
+    Serial.print(" y: ");
+    Serial.println(positionTrailer.y);
+
+    Serial.print("Target data:: x:");
+    Serial.print(positionTarget.x);
+    Serial.print(" y: ");
+    Serial.println(positionTarget.y);
+    */
+    float delta = position.steeringAngle(positionTrailer, positionTarget, positionData.rz);
     servoManager.writeAngle(delta);
+
+    //Serial.print("Angle data:: delta:");
+    //Serial.println(delta);
+
+    //servoManager.writeAngle(0);
+    //servoManager.writeAngle(positionData.rz * 180 / 3.14);
 
     if (ppc.atEnd()) {
         motor.stop();
     }
+
+    //Serial.println("########  END  ########");
 
     delay(FRAME_DELAY);
 }

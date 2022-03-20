@@ -8,10 +8,9 @@
 using namespace cv;
 
 // Defining the dimensions of checkerboard
-int CHECKERBOARD[2]{6,9};
+int CHECKERBOARD[2]{6, 9};
 
-int main()
-{
+int main() {
     Mat frame;
     VideoCapture videoCapture;
 
@@ -20,17 +19,16 @@ int main()
     videoCapture.open(deviceID, apiID);
 
     // Creating vector to store vectors of 3D points for each checkerboard image
-    std::vector<std::vector<cv::Point3f> > objpoints;
+    std::vector<std::vector<cv::Point3f>> objpoints;
 
     // Creating vector to store vectors of 2D points for each checkerboard image
-    std::vector<std::vector<cv::Point2f> > imgpoints;
+    std::vector<std::vector<cv::Point2f>> imgpoints;
 
     // Defining the world coordinates for 3D points
     std::vector<cv::Point3f> objp;
-    for(int i = 0; i < CHECKERBOARD[1]; i++)
-    {
-        for(int j = 0; j<CHECKERBOARD[0]; j++)
-            objp.push_back(cv::Point3f(j,i,0));
+    for (int i = 0; i < CHECKERBOARD[1]; i++) {
+        for (int j = 0; j < CHECKERBOARD[0]; j++)
+            objp.push_back(cv::Point3f(j, i, 0));
     }
 
     Mat gray;
@@ -39,30 +37,30 @@ int main()
     bool success;
 
     // Looping over all the images in the directory
-    for(int i = 0; i < 20; i++) {
+    for (int i = 0; i < 20; i++) {
         videoCapture.read(frame);
-        cv::cvtColor(frame,gray,cv::COLOR_BGR2GRAY);
+        cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
 
-        success = cv::findChessboardCorners(gray, cv::Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts, CALIB_CB_ADAPTIVE_THRESH | CALIB_CB_FAST_CHECK | CALIB_CB_NORMALIZE_IMAGE);
+        success = cv::findChessboardCorners(gray, cv::Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts,
+                                            CALIB_CB_ADAPTIVE_THRESH | CALIB_CB_FAST_CHECK | CALIB_CB_NORMALIZE_IMAGE);
 
-        if(success)
-        {
+        if (success) {
             TermCriteria criteria(3, 30, 0.001);
-            cornerSubPix(gray,corner_pts,Size(11,11), Size(-1,-1), criteria);
+            cornerSubPix(gray, corner_pts, Size(11, 11), Size(-1, -1), criteria);
             drawChessboardCorners(frame, Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts, success);
 
             objpoints.push_back(objp);
             imgpoints.push_back(corner_pts);
         }
 
-        cv::imshow("Image",frame);
+        //cv::imshow("Image",frame);
         cv::waitKey(1000);
     }
 
-    destroyAllWindows();
+    //destroyAllWindows();
 
     Mat cameraMatrix, distCoeffs, R, T;
-    cv::calibrateCamera(objpoints, imgpoints, cv::Size(gray.rows,gray.cols), cameraMatrix, distCoeffs, R, T);
+    cv::calibrateCamera(objpoints, imgpoints, cv::Size(gray.rows, gray.cols), cameraMatrix, distCoeffs, R, T);
 
     std::cout << "cameraMatrix : " << cameraMatrix << std::endl;
     std::cout << "distCoeffs : " << distCoeffs << std::endl;
