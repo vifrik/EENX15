@@ -96,7 +96,7 @@ if (fd == -1) {
                 Vec3d rotation = eulerRotation::rotationMatrixToEulerAngles((Mat3d) tCameraWorld.rotation());
 
                 // 1/(dx^2 * dy^3 * dz^3)
-                double weight = 1 / (pow(pos.tvecs[i][2], 2) * pow(pos.tvecs[i][0], 3) * pow(pos.tvecs[i][1], 3));
+                double weight = 1 / (pow(pos.tvecs[i][2], 2) * pow(pos.tvecs[i][0], 2) * pow(pos.tvecs[i][1], 2));
                 sumCameraTranslationalVector += weight * translation;
                 sumCameraRotationalVector += weight * rotation;
                 weightTotal += weight;
@@ -110,9 +110,12 @@ if (fd == -1) {
             //std::cout << sumCameraTranslationalVector[0] << " " << sumCameraTranslationalVector[1] << std::endl;
 #ifdef SERIAL
             char char_array[13]; // 4 bytes * 3 floats + null terminator, 4+4+4+1 = 13
+            float x = sumCameraTranslationalVector[0];
+            float y = sumCameraTranslationalVector[1];
             float rz = sumCameraRotationalVector[2];
 
-            memcpy(char_array, sumCameraTranslationalVector, 8);
+            memcpy(char_array, &x, 4);
+            memcpy(char_array + 4, &y, 4);
             memcpy(char_array + 8, &rz, 4);
             char_array[12] = '\0'; // null terminator
 
