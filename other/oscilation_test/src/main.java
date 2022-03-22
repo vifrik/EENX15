@@ -54,13 +54,13 @@ public class main extends PApplet{
 
             translate(WIDTH / 2 * 0.8f, HEIGHT / 2);
             pushMatrix();
-            rotate(delta / 0.05f * 2);
+            rotate(delta * 2);
             rect(-10,-2, 20, 4);
             popMatrix();
 
             translate(0, -HEIGHT);
             pushMatrix();
-            rotate(delta / 0.05f * 2);
+            rotate(delta * 2);
             rect(-10,-2, 20, 4);
             popMatrix();
 
