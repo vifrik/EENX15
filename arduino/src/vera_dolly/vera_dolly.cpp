@@ -78,12 +78,6 @@ void loop() {
     uint16_t c = crc16(bytesBuffer, 12);
     if(c != positionData.crc) return;
 
-    if (positionData.x < 0 || positionData.x > 10) 
-        return;
-
-    if (positionData.y < 0 || positionData.y > 10) 
-        return;
-
     //Serial.println("######## BEGIN ########");
 
     Coord positionTrailer(positionData.x, positionData.y);
