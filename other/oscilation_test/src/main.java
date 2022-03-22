@@ -4,26 +4,40 @@ public class main extends PApplet{
     class Car {
         private static final int WIDTH = 20;
         private static final int HEIGHT = 12;
+        private static final int TRAILER_WIDTH = 100;
         float x, y, rz;
         float delta;
         float vel;
+
+        float theta = 0;
+        float xTrailer;
+        float yTrailer;
 
         public Car(float x, float y, float rz, float vel) {
             this.x = x;
             this.y = y;
             this.rz = rz;
             this.vel = vel;
+
+            xTrailer = this.x + TRAILER_WIDTH;
+            yTrailer = this.y;
         }
 
         void setAngle(float angle) {
             final float MAX_ANGLE = 5.0f * PI / 180.0f;
-            delta = max(-MAX_ANGLE, min(MAX_ANGLE, angle)) * 0.05f;
+            delta = max(-MAX_ANGLE, min(MAX_ANGLE, angle));
         }
 
         void update() {
             this.x += vel * cos(rz);
             this.y += vel * sin(rz);
-            this.rz += tan(delta) * vel;
+            this.rz += tan(delta) * vel / WIDTH;
+
+            this.xTrailer = vel * cos(rz - theta) * cos(theta);
+            this.yTrailer = vel * cos(rz - theta) * sin(theta);
+
+            float d_theta = vel * sin(rz - theta) / TRAILER_WIDTH;
+            this.theta += d_theta;
         }
 
         void draw() {
@@ -52,6 +66,12 @@ public class main extends PApplet{
 
             popMatrix();
 
+            pushMatrix();
+            //rotate(-theta);
+            //rect(0, -HEIGHT/2, -TRAILER_WIDTH, HEIGHT);
+
+            popMatrix();
+
             popMatrix();
         }
     }
@@ -71,8 +91,10 @@ public class main extends PApplet{
         float angle = atan2(100 - car.y, 1200 - car.x);
         float error = angle - car.rz + PI; // reverse
         //float error = angle - car.rz; // forward
-        car.setAngle(-(angle + error)); // reverse
+        car.setAngle(-angle - error); // reverse
         //car.setAngle(angle + error); // forward
+
+        System.out.println("Angle: " + angle + " Error: " + error + " Delta: " + (-angle - error));
 
 
         noStroke();
