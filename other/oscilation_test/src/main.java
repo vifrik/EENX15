@@ -9,9 +9,11 @@ public class main extends PApplet{
         float delta;
         float vel;
 
-        float theta = 0;
+        float theta;
         float xTrailer;
         float yTrailer;
+
+        float relAngle = 0;
 
         public Car(float x, float y, float rz, float vel) {
             this.x = x;
@@ -19,8 +21,11 @@ public class main extends PApplet{
             this.rz = rz;
             this.vel = vel;
 
-            xTrailer = this.x + TRAILER_WIDTH;
-            yTrailer = this.y;
+            xTrailer = cos(rz) * TRAILER_WIDTH;
+            yTrailer = sin(rz) * TRAILER_WIDTH;
+            theta = this.rz;
+
+            relAngle += rz - theta;
         }
 
         void setAngle(float angle) {
@@ -33,8 +38,8 @@ public class main extends PApplet{
             this.y += vel * sin(rz);
             this.rz += tan(delta) * vel / WIDTH;
 
-            this.xTrailer = vel * cos(rz - theta) * cos(theta);
-            this.yTrailer = vel * cos(rz - theta) * sin(theta);
+            this.xTrailer += vel * cos(rz - theta) * cos(theta);
+            this.yTrailer += vel * cos(rz - theta) * sin(theta);
 
             float d_theta = vel * sin(rz - theta) / TRAILER_WIDTH;
             this.theta += d_theta;
@@ -50,34 +55,38 @@ public class main extends PApplet{
             rect(-WIDTH/2, -HEIGHT/2, WIDTH, HEIGHT);
 
             pushMatrix();
-            fill(0,0,255);
+                fill(0,0,255);
+                translate(WIDTH / 2 * 0.8f, HEIGHT / 2);
+                pushMatrix();
+                    rotate(delta * 2);
+                    rect(-10,-2, 20, 4);
+                    popMatrix();
 
-            translate(WIDTH / 2 * 0.8f, HEIGHT / 2);
+                    translate(0, -HEIGHT);
+                    pushMatrix();
+                        rotate(delta * 2);
+                        rect(-10,-2, 20, 4);
+                    popMatrix();
+
+                popMatrix();
+
+
+
+            popMatrix();
+
             pushMatrix();
-            rotate(delta * 2);
-            rect(-10,-2, 20, 4);
+            translate(xTrailer, yTrailer);
+            rotate(theta);
+
+            rect(0,-HEIGHT / 2, -TRAILER_WIDTH, HEIGHT);
+            circle(0,0, 5);
             popMatrix();
 
-            translate(0, -HEIGHT);
-            pushMatrix();
-            rotate(delta * 2);
-            rect(-10,-2, 20, 4);
-            popMatrix();
-
-            popMatrix();
-
-            pushMatrix();
-            //rotate(-theta);
-            //rect(0, -HEIGHT/2, -TRAILER_WIDTH, HEIGHT);
-
-            popMatrix();
-
-            popMatrix();
         }
     }
 
     public void settings(){
-        size(1200, 200);
+        size(1200, 800);
     }
 
     Car car = new Car(0, 100, 45*PI/180+PI, -2f); // reverse
@@ -93,9 +102,6 @@ public class main extends PApplet{
         //float error = angle - car.rz; // forward
         car.setAngle(-angle - error); // reverse
         //car.setAngle(angle + error); // forward
-
-        System.out.println("Angle: " + angle + " Error: " + error + " Delta: " + (-angle - error));
-
 
         noStroke();
         car.update();
