@@ -31,7 +31,27 @@ public class main extends PApplet{
             translate(this.x, this.y);
             rotate(this.rz);
 
-            rect(0, 0, WIDTH, HEIGHT);
+            fill(255,0,0);
+
+            rect(-WIDTH/2, -HEIGHT/2, WIDTH, HEIGHT);
+
+            pushMatrix();
+            fill(0,0,255);
+
+            translate(WIDTH / 2 * 0.8f, HEIGHT / 2);
+            pushMatrix();
+            rotate(delta / 0.05f * 5);
+            rect(-10,-2, 20, 4);
+            popMatrix();
+
+            translate(0, -HEIGHT);
+            pushMatrix();
+            rotate(delta / 0.05f * 5);
+            rect(-10,-2, 20, 4);
+            popMatrix();
+
+            popMatrix();
+
             popMatrix();
         }
     }
@@ -40,7 +60,8 @@ public class main extends PApplet{
         size(1200, 200);
     }
 
-    Car car = new Car(0, 100, 45*PI/180, 2f);
+    Car car = new Car(0, 100, 45*PI/180+PI, -2f);
+    //Car car = new Car(0, 100, 45*PI/180, 2f);
 
     public void draw() {
         background(0);
@@ -48,8 +69,8 @@ public class main extends PApplet{
         line(0,100,1200,100);
 
         float angle = atan2(100 - car.y, 1200 - car.x);
-        float error = angle - car.rz;
-        car.setAngle(error + angle);
+        float error = angle - car.rz + PI;
+        car.setAngle(-angle - error);
 
         noStroke();
         car.update();
