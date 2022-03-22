@@ -23,6 +23,21 @@ int fd;
 
 using namespace cv;
 
+uint16_t crc16(unsigned char *data, size_t len) {
+    uint16_t crc = 0;
+    for (size_t i = 0; i < len; i++) {
+        crc ^= data[i];
+        for (int k = 0; k < 8; k++) {
+            crc = crc & 1 ? (crc >> 1) ^ 0xa001 : crc >> 1;
+        }
+    }
+    if (crc < 256)
+        crc |= 1 << 8;
+    if (!(crc & 255))
+        crc |= 1 << 0;
+    return crc;
+}
+
 int main(int argc, char **argv) {
     String markerFilePath;
 
@@ -45,7 +60,7 @@ int main(int argc, char **argv) {
 #ifdef SERIAL
     // Open port
     fd = open(SERIAL_PORT, O_RDWR | O_NOCTTY | O_NDELAY);
-if (fd == -1) {
+    if (fd == -1) {
         printf("Device cannot be opened.\n");
         exit(-1);
     }
@@ -109,7 +124,7 @@ if (fd == -1) {
             sumCameraRotationalVector(2) += -M_PI_2; // Make zero rotation in the direction of the x-axis
             //std::cout << sumCameraTranslationalVector[0] << " " << sumCameraTranslationalVector[1] << std::endl;
 #ifdef SERIAL
-            char char_array[13]; // 4 bytes * 3 floats + null terminator, 4+4+4+1 = 13
+            unsigned char char_array[15]; // 4 bytes * 3 floats + null terminator, 4+4+4+1 = 13
             float x = sumCameraTranslationalVector[0];
             float y = sumCameraTranslationalVector[1];
             float rz = sumCameraRotationalVector[2];
@@ -117,7 +132,10 @@ if (fd == -1) {
             memcpy(char_array, &x, 4);
             memcpy(char_array + 4, &y, 4);
             memcpy(char_array + 8, &rz, 4);
-            char_array[12] = '\0'; // null terminator
+            uint16_t crc = crc16(char_array, 12);
+            //std::cout << std::hex << crc << std::endl;
+            memcpy(char_array + 0xC, &crc, 8);
+            char_array[14] = '\0'; // null terminator
 
             write(fd, char_array, sizeof char_array);
 #endif
