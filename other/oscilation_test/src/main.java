@@ -14,6 +14,7 @@ public class main extends PApplet{
         float yTrailer;
 
         float relAngle = 0;
+        float oldAngleDesired = 0;
 
         public Car(float x, float y, float rz, float vel) {
             this.x = x;
@@ -31,19 +32,31 @@ public class main extends PApplet{
 
         void setAngle(float angle) {
             final float MAX_ANGLE = 5.0f * PI / 180.0f;
-            delta = max(-MAX_ANGLE, min(MAX_ANGLE, angle));
+            //delta = max(-MAX_ANGLE, min(MAX_ANGLE, angle));
         }
 
         void update() {
             this.x += vel * cos(rz);
             this.y += vel * sin(rz);
-            this.rz += tan(delta) * vel / WIDTH;
+            float d_rz = tan(delta) * vel / WIDTH;;
+            this.rz += d_rz;
 
             this.xTrailer += vel * cos(rz - theta) * cos(theta);
             this.yTrailer += vel * cos(rz - theta) * sin(theta);
 
             float d_theta = vel * sin(rz - theta) / TRAILER_WIDTH;
             this.theta += d_theta;
+
+            float angle = atan2(100 - yTrailer, 1200 - xTrailer);
+            float error = angle - theta + PI; // reverse
+
+            float angleDesired = (-angle-error) + PI;
+            float d_angleDesired = angleDesired - oldAngleDesired;
+
+            oldAngleDesired = angleDesired;
+
+            delta = -atan2((d_theta - d_angleDesired) * TRAILER_WIDTH, vel);
+            delta = max(-5*PI/180, min(5*PI/180, delta));
         }
 
         void draw() {
@@ -95,8 +108,8 @@ public class main extends PApplet{
         stroke(255,0,0);
         line(0,100,1200,100);
 
-        float angle = atan2(100 - car.y, 1200 - car.x);
-        float error = angle - car.rz + PI; // reverse
+        float angle = atan2(100 - car.yTrailer, 1200 - car.xTrailer);
+        float error = angle - car.theta + PI; // reverse
         //float error = angle - car.rz; // forward
         car.setAngle(-angle - error); // reverse
         //car.setAngle(angle + error); // forward
