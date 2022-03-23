@@ -21,8 +21,9 @@ public class main extends PApplet{
             this.rz = rz;
             this.vel = vel;
 
-            xTrailer = cos(rz) * TRAILER_WIDTH;
-            yTrailer = sin(rz) * TRAILER_WIDTH;
+            rz = rz - PI;
+            xTrailer = x + cos(rz) * TRAILER_WIDTH;
+            yTrailer = y + sin(rz) * TRAILER_WIDTH;
             theta = this.rz;
 
             relAngle += rz - theta;
@@ -70,18 +71,15 @@ public class main extends PApplet{
 
                 popMatrix();
 
-
-
             popMatrix();
 
             pushMatrix();
-            translate(xTrailer, yTrailer);
-            rotate(theta);
+                translate(xTrailer, yTrailer);
+                rotate(theta + PI);
 
-            rect(0,-HEIGHT / 2, -TRAILER_WIDTH, HEIGHT);
-            circle(0,0, 5);
+                rect(0,-HEIGHT / 2, -TRAILER_WIDTH, HEIGHT);
+                circle(0,0, 5);
             popMatrix();
-
         }
     }
 
@@ -89,7 +87,7 @@ public class main extends PApplet{
         size(1200, 800);
     }
 
-    Car car = new Car(0, 100, 45*PI/180+PI, -2f); // reverse
+    Car car = new Car(200, 100, 45*PI/180+PI, -2f); // reverse
     //Car car = new Car(0, 100, 45*PI/180, 2f); // forward
 
     public void draw() {
@@ -104,8 +102,12 @@ public class main extends PApplet{
         //car.setAngle(angle + error); // forward
 
         noStroke();
-        car.update();
+        if (keyCode == ENTER) {
+            car.update();
+        }
+
         car.draw();
+
     }
 
     public static void main(String... args) {
