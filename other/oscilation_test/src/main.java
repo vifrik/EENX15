@@ -50,13 +50,15 @@ public class main extends PApplet{
             float angle = atan2(100 - yTrailer, 1200 - xTrailer);
             float error = angle - theta + PI; // reverse
 
-            float angleDesired = (-angle-error) + PI;
-            float d_angleDesired = angleDesired - oldAngleDesired;
+            float angleDesired = -(-angle-error);
+            float d_angleDesired = (angleDesired - oldAngleDesired) * 60f;
+
+            System.out.println(angleDesired);
 
             oldAngleDesired = angleDesired;
 
-            delta = -atan2((d_theta - d_angleDesired) * TRAILER_WIDTH, vel);
-            delta = max(-5*PI/180, min(5*PI/180, delta));
+            float deltaTarget = -atan2((d_theta - d_angleDesired) * TRAILER_WIDTH, vel);
+            delta = max(-15*PI/180, min(15*PI/180, max(-0.05f, min(0.05f, delta + deltaTarget))));
         }
 
         void draw() {
@@ -100,7 +102,7 @@ public class main extends PApplet{
         size(1200, 800);
     }
 
-    Car car = new Car(200, 100, 45*PI/180+PI, -2f); // reverse
+    Car car = new Car(200, 100, 30*PI/180+PI, -2f); // reverse
     //Car car = new Car(0, 100, 45*PI/180, 2f); // forward
 
     public void draw() {
@@ -108,10 +110,10 @@ public class main extends PApplet{
         stroke(255,0,0);
         line(0,100,1200,100);
 
-        float angle = atan2(100 - car.yTrailer, 1200 - car.xTrailer);
-        float error = angle - car.theta + PI; // reverse
+        //float angle = atan2(100 - car.yTrailer, 1200 - car.xTrailer);
+        //float error = angle - car.theta + PI; // reverse
         //float error = angle - car.rz; // forward
-        car.setAngle(-angle - error); // reverse
+        //car.setAngle(-angle - error); // reverse
         //car.setAngle(angle + error); // forward
 
         noStroke();
