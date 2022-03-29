@@ -75,6 +75,7 @@ public class main extends PApplet{
         float xTrailer;
         float yTrailer;
 
+        float relAngle = 0;
         float oldAngleDesired = 0;
 
         public Car(float x, float y, float rz, float vel) {
