@@ -43,7 +43,7 @@ public class main extends PApplet{
             float d_theta = vel * sin(rz - theta) / TRAILER_WIDTH;
             this.theta += d_theta;
 
-            angle = atan2(100 - yTrailer, 1200 - xTrailer);
+            angle = atan2(300 - yTrailer, 1200 - xTrailer);
             error = angle - theta + PI; // reverse
 
             float angleDesired = -(-angle-error);
