@@ -44,7 +44,7 @@ public class main extends PApplet{
             this.theta += d_theta;
 
             angle = atan2(300 - yTrailer, 1200 - xTrailer);
-            error = angle - theta + PI; // reverse
+            error = angle - theta + PI;
 
             float angleDesired = -(-angle-error);
             float d_angleDesired = (angleDesired - oldAngleDesired);
@@ -111,19 +111,11 @@ public class main extends PApplet{
         size(1200, 800);
     }
 
-    Car car = new Car(300, 550, -15*PI/180+PI, -2f); // reverse
-    //Car car = new Car(0, 100, 45*PI/180, 2f); // forward
-
+    Car car = new Car(300, 550, -15*PI/180+PI, -2f);
     public void draw() {
         background(0);
         stroke(255,0,0);
         line(0,300,1200,300);
-
-        //float angle = atan2(100 - car.yTrailer, 1200 - car.xTrailer);
-        //float error = angle - car.theta + PI; // reverse
-        //float error = angle - car.rz; // forward
-        //car.setAngle(-angle - error); // reverse
-        //car.setAngle(angle + error); // forward
 
         noStroke();
         if (keyCode == ENTER) {
