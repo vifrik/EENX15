@@ -16,6 +16,9 @@ public class main extends PApplet{
 
         float oldAngleDesired = 0;
 
+        float angle = 0;
+        float error = 0;
+
         public Car(float x, float y, float rz, float vel) {
             this.x = x;
             this.y = y;
@@ -40,8 +43,8 @@ public class main extends PApplet{
             float d_theta = vel * sin(rz - theta) / TRAILER_WIDTH;
             this.theta += d_theta;
 
-            float angle = atan2(300 - yTrailer, 1200 - xTrailer);
-            float error = angle - theta + PI; // reverse
+            angle = atan2(100 - yTrailer, 1200 - xTrailer);
+            error = angle - theta + PI; // reverse
 
             float angleDesired = -(-angle-error);
             float d_angleDesired = (angleDesired - oldAngleDesired);
@@ -49,7 +52,7 @@ public class main extends PApplet{
             oldAngleDesired = angleDesired;
 
             float deltaTarget = -atan2((d_theta - d_angleDesired) * WIDTH, vel);
-            
+
             delta += max(-0.01f, min(0.01f, deltaTarget - delta));
             delta = max(-10*PI/180, min(10*PI/180, delta));
         }
@@ -82,11 +85,24 @@ public class main extends PApplet{
             popMatrix();
 
             pushMatrix();
-            translate(xTrailer, yTrailer);
-            rotate(theta + PI);
+                translate(xTrailer, yTrailer);
+                rotate(theta + PI);
 
-            rect(0,-HEIGHT / 2, -TRAILER_WIDTH, HEIGHT);
-            circle(0,0, 5);
+                rect(0,-HEIGHT / 2, -TRAILER_WIDTH, HEIGHT);
+                circle(0,0, 5);
+                pushStyle();
+                    stroke(255,0,0);
+                    line(0, 0, 100, 0);
+
+                    stroke(0,255,0);
+                    line(0, 0, cos(angle) * 20, sin(angle) * 20);
+
+                    stroke(0,0,255);
+                    line(0, 0, cos(error) * 20, sin(error) * 20);
+                popStyle();
+
+                rect(0,-HEIGHT / 2, -TRAILER_WIDTH, HEIGHT);
+                circle(0,0, 5);
             popMatrix();
         }
     }
