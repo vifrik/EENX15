@@ -32,7 +32,6 @@ public class main extends PApplet{
                     Coord position = new Coord(resolution * i, 50.0f * sin(i / 600.0f * 2 * PI) + 300.0f);
                     path.add(position);
                 }
-
             }
 
             Coord getTarget(double lookahead, Coord position) {
@@ -73,7 +72,7 @@ public class main extends PApplet{
             }
         }
     class Car {
-        private static final int WIDTH = 20;
+        private static final int WIDTH = 12;
         private static final int HEIGHT = 12;
         private static final int TRAILER_WIDTH = 100;
         float x, y, rz;
@@ -154,13 +153,13 @@ public class main extends PApplet{
             translate(WIDTH / 2 * 0.8f, HEIGHT / 2);
             pushMatrix();
             rotate(delta);
-            rect(-10,-2, 20, 4);
+            rect(-2,-1, 4, 2);
             popMatrix();
 
             translate(0, -HEIGHT);
             pushMatrix();
             rotate(delta);
-            rect(-10,-2, 20, 4);
+            rect(-2,-1, 4, 2);
             popMatrix();
 
             popMatrix();
@@ -175,7 +174,7 @@ public class main extends PApplet{
                 pushStyle();
                 noFill();
                 stroke(0,0,255);
-                circle(0,0, 200);
+                circle(0,0, 160);
                 popStyle();
 
                 pushStyle();
