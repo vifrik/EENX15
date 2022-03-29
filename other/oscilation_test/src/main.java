@@ -19,7 +19,7 @@ public class main extends PApplet{
 
             int index = 0;
             boolean fromNegative = false;
-            private static final int MAX_STEPS = 100;
+            private static final int MAX_STEPS = 10000;
 
             static double calculateDistance(Coord c1, Coord c2) {
                 return sqrt(pow(c1.x - c2.x, 2) + pow(c1.y - c2.y, 2));
@@ -65,7 +65,10 @@ public class main extends PApplet{
                 return path.get(index);
             }
 
-            boolean atEnd() {
+            boolean atEnd(double lookahead, Coord position, Coord target) {
+                if (sqrt(pow(position.y - target.y, 2) + pow(position.x - target.x, 2)) < 0.2f * lookahead) {
+                    return true;
+                }
                 return false;
             }
         }
@@ -85,6 +88,7 @@ public class main extends PApplet{
 
         float angle = 0;
         float error = 0;
+        boolean shouldUpdate = true;
 
         PPC ppc = new PPC(1200);
         Coord target = new Coord(0,0);
@@ -102,12 +106,19 @@ public class main extends PApplet{
         }
 
         void update() {
+            if (!shouldUpdate) return;
+
             this.x += vel * cos(rz);
             this.y += vel * sin(rz);
             float d_rz = tan(delta) * vel / WIDTH;;
             this.rz += d_rz;
 
-            target = ppc.getTarget(100.0f, new Coord(xTrailer, yTrailer));
+            Coord trailerPosition = new Coord(xTrailer, yTrailer);
+            target = ppc.getTarget(80.0f, trailerPosition);
+            if (ppc.atEnd(80.0f, trailerPosition, target)) {
+                shouldUpdate = false;
+                return;
+            }
 
             this.xTrailer += vel * cos(rz - theta) * cos(theta);
             this.yTrailer += vel * cos(rz - theta) * sin(theta);
@@ -125,8 +136,8 @@ public class main extends PApplet{
 
             float deltaTarget = -atan2((d_theta - d_angleDesired - d_rz) * WIDTH, vel);
 
-            delta += max(-0.01f, min(0.01f, deltaTarget - delta));
-            delta = max(-10*PI/180, min(10*PI/180, delta));
+            delta += max(-0.25f, min(0.25f, deltaTarget - delta));
+            delta = max(-30*PI/180, min(30*PI/180, delta));
         }
 
         void draw() {
