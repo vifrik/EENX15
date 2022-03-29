@@ -52,6 +52,7 @@ public class main extends PApplet{
             oldAngleDesired = angleDesired;
 
             float deltaTarget = -atan2((d_theta - d_angleDesired) * WIDTH, vel);
+            float deltaTarget = -atan2((d_theta - d_angleDesired - d_rz) * WIDTH, vel);
 
             delta += max(-0.01f, min(0.01f, deltaTarget - delta));
             delta = max(-10*PI/180, min(10*PI/180, delta));
