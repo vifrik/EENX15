@@ -19,7 +19,7 @@ public class main extends PApplet{
 
             int index = 0;
             boolean fromNegative = false;
-            private static final int MAX_STEPS = 100;
+            private static final int MAX_STEPS = 10000;
 
             static double calculateDistance(Coord c1, Coord c2) {
                 return sqrt(pow(c1.x - c2.x, 2) + pow(c1.y - c2.y, 2));
@@ -32,7 +32,6 @@ public class main extends PApplet{
                     Coord position = new Coord(resolution * i, 50.0f * sin(i / 600.0f * 2 * PI) + 300.0f);
                     path.add(position);
                 }
-
             }
 
             Coord getTarget(double lookahead, Coord position) {
@@ -65,12 +64,15 @@ public class main extends PApplet{
                 return path.get(index);
             }
 
-            boolean atEnd() {
+            boolean atEnd(double lookahead, Coord position, Coord target) {
+                if (sqrt(pow(position.y - target.y, 2) + pow(position.x - target.x, 2)) < 0.2f * lookahead) {
+                    return true;
+                }
                 return false;
             }
         }
     class Car {
-        private static final int WIDTH = 20;
+        private static final int WIDTH = 12;
         private static final int HEIGHT = 12;
         private static final int TRAILER_WIDTH = 100;
         float x, y, rz;
@@ -85,6 +87,7 @@ public class main extends PApplet{
 
         float angle = 0;
         float error = 0;
+        boolean shouldUpdate = true;
 
         PPC ppc = new PPC(1200);
         Coord target = new Coord(0,0);
@@ -102,12 +105,19 @@ public class main extends PApplet{
         }
 
         void update() {
+            if (!shouldUpdate) return;
+
             this.x += vel * cos(rz);
             this.y += vel * sin(rz);
             float d_rz = tan(delta) * vel / WIDTH;;
             this.rz += d_rz;
 
-            target = ppc.getTarget(100.0f, new Coord(xTrailer, yTrailer));
+            Coord trailerPosition = new Coord(xTrailer, yTrailer);
+            target = ppc.getTarget(80.0f, trailerPosition);
+            if (ppc.atEnd(80.0f, trailerPosition, target)) {
+                shouldUpdate = false;
+                return;
+            }
 
             this.xTrailer += vel * cos(rz - theta) * cos(theta);
             this.yTrailer += vel * cos(rz - theta) * sin(theta);
@@ -125,8 +135,8 @@ public class main extends PApplet{
 
             float deltaTarget = -atan2((d_theta - d_angleDesired - d_rz) * WIDTH, vel);
 
-            delta += max(-0.01f, min(0.01f, deltaTarget - delta));
-            delta = max(-10*PI/180, min(10*PI/180, delta));
+            delta += max(-0.25f, min(0.25f, deltaTarget - delta));
+            delta = max(-30*PI/180, min(30*PI/180, delta));
         }
 
         void draw() {
@@ -143,13 +153,13 @@ public class main extends PApplet{
             translate(WIDTH / 2 * 0.8f, HEIGHT / 2);
             pushMatrix();
             rotate(delta);
-            rect(-10,-2, 20, 4);
+            rect(-2,-1, 4, 2);
             popMatrix();
 
             translate(0, -HEIGHT);
             pushMatrix();
             rotate(delta);
-            rect(-10,-2, 20, 4);
+            rect(-2,-1, 4, 2);
             popMatrix();
 
             popMatrix();
@@ -164,7 +174,7 @@ public class main extends PApplet{
                 pushStyle();
                 noFill();
                 stroke(0,0,255);
-                circle(0,0, 200);
+                circle(0,0, 160);
                 popStyle();
 
                 pushStyle();
