@@ -22,19 +22,18 @@ struct PositionData {
 class Position {
 private:
     uint32_t timeOld = 0;
-
-    uint16_t crc16(unsigned char* data, size_t len) {
-        uint16_t crc = 0;
-        for (size_t i = 0; i < len; i++) {
-            crc ^= data[i];
-            for (int k = 0; k < 8; k++) {
-                crc = crc & 1 ? (crc >> 1) ^ 0xa001 : crc >> 1;
-            }
-            if(crc < 256) crc |= 1 << 8;
-            if (!(crc & 255)) crc |= 1 << 0;
-            return crc;
+uint16_t crc16(unsigned char* data, size_t len) {
+    uint16_t crc = 0;
+    for (size_t i = 0; i < len; i++) {
+        crc ^= data[i];
+        for (int k = 0; k < 8; k++) {
+            crc = crc & 1 ? (crc >> 1) ^ 0xa001 : crc >> 1;
         }
     }
+    if(crc < 256) crc |= 1 << 8;
+    if (!(crc & 255)) crc |= 1 << 0;
+    return crc;
+}
 
 public:
     Position() {
@@ -44,7 +43,7 @@ public:
     bool getPositionTrailer(float angleMagnetic, PositionData& posTruck, PositionData& posTrailer) {
         unsigned char bytesBuffer[15]; 
         int size = SerialUSB.readBytesUntil(byte(0), bytesBuffer, 15);
-        if(size != 14) return;
+        if(size != 14) return false;
 
         memcpy(&posTruck, bytesBuffer, 14);  
         uint16_t c = crc16(bytesBuffer, 12);
@@ -63,16 +62,16 @@ public:
         uint32_t timeNow = millis();
         float dt = (timeNow - timeOld) / 1000.0f; // [s]
         if(dt == 0) {
-            timeOld = timeNow;
+            //timeOld = timeNow;
             return 0;
         }
 
         float velTruck = sqrt(pow(posTruck.x - oldPosTruck.x, 2) + pow(posTruck.y - oldPosTruck.y, 2)) / dt;
 
         float angleTrailerWorldDesired = atan2(posDesired.y - posTrailer.y, posDesired.x - posTrailer.x);
-        float angleTrailerWorldError = angleTrailerWorldDesired - posTrailer.rz + PI;
+        //float angleTrailerWorldError = angleTrailerWorldDesired - posTrailer.rz + PI;
 
-        float angleMagneticDesired = angleTrailerWorldDesired + angleTrailerWorldError;   
+        //float angleMagneticDesired = angleTrailerWorldDesired + angleTrailerWorldError;   
 
         float d_angleTrailerWorld = (posTrailer.rz - oldAngleTrailerWorld) / dt;
         float d_angleTrailerWorldDesired = (angleTrailerWorldDesired - oldAngleTrailerWorldDesired) / dt;
