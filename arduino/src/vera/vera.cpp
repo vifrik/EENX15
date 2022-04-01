@@ -28,7 +28,7 @@ ServoManager servoManager = ServoManager(SERVO_PIN);
 Motor motor = Motor(MOTOR_FIRST_DIR_PIN, MOTOR_SECOND_DIR_PIN, MOTOR_SPEED_PIN);
 Position position;
 Vector<Coord> path;
-purePursuitController ppc = purePursuitController(path, LOOKAHEAD_DISTANCE);
+purePursuitController ppc = purePursuitController(); //path, LOOKAHEAD_DISTANCE);
 
 
 void setup() {
@@ -48,12 +48,18 @@ void setup() {
     motor.setSpeed(MOTOR_SPEED);
 }
 
+PositionData posTruck;
+PositionData posTrailer;
 void loop() {
     float phi = magnetic.readAngle();
 
-    Coord positionTrailer = position.getPositionTrailer(phi);
-    Coord positionTarget = ppc.getTarget(positionTrailer);
-    float delta = position.steeringAngle(positionTrailer, positionTarget);
+    if(!position.getPositionTrailer(phi, posTruck, posTrailer)) {
+        Serial.println("Fail get posttrailer");
+        return;
+    }
+
+    Coord posTarget = ppc.getTarget(path, 75, Coord(posTrailer.x, posTrailer.y));
+    float delta = position.steeringAngle(posTruck, posTrailer, posTarget);
 
     servoManager.writeAngle(delta);
 

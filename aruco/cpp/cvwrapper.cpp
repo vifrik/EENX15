@@ -3,7 +3,6 @@
 //
 
 #include "cvwrapper.h"
-#include <iostream>
 
 cvwrapper::cvwrapper(int index, int apiPreference) {
     startCapture(index, apiPreference);
@@ -41,14 +40,8 @@ void cvwrapper::detect(InputOutputArray &frame) {
 }
 
 void cvwrapper::drawBoundingBoxes(InputOutputArray &frame, Scalar color) {
+    aruco::drawDetectedMarkers(frame, markerCorners, noArray(), color);
     for (int i = 0; i < markerIds.size(); i++) {
-        std::vector<Point2f> corners = markerCorners[i]; // Get current corners of tag with id, id
-
-        // Draw bounding box around tag
-        for (int j = 0; j < 4; j++) {
-            line(frame, corners[j], corners[(j + 1) % 4], color, 2, LINE_8);
-        }
-
         aruco::drawAxis(frame, cameraMatrix, distCoeffs, rtVecs.rvecs[i], rtVecs.tvecs[i], 0.05);
     }
 }
@@ -58,17 +51,17 @@ void cvwrapper::drawIds(InputOutputArray &frame, Scalar color) {
         std::vector<Point2f> corners = markerCorners[i]; // Get current corners of tag with id, id
 
         // Write id text at top left corner of tag
-        putText(frame, std::to_string(markerIds[i]), Point(corners[0].x,corners[0].y - 15),
-                FONT_HERSHEY_DUPLEX,1, color, 2, false);
+        putText(frame, std::to_string(markerIds[i]), Point(corners[0].x, corners[0].y - 15),
+                FONT_HERSHEY_DUPLEX, 1, color, 2, false);
     }
 }
 
 void cvwrapper::drawBox(InputOutputArray &frame, Scalar color, int x, int y, int w, int h, int thickness) {
     Point tl, tr, bl, br; // top-left, top-right, bottom-left, bottom-right
     tl = Point(x, y);
-    tr = Point(x+w, y);
-    bl = Point(x, y+h);
-    br = Point(x+w, y+h);
+    tr = Point(x + w, y);
+    bl = Point(x, y + h);
+    br = Point(x + w, y + h);
     line(frame, tl, tr, color, thickness, LINE_8);
     line(frame, tr, br, color, thickness, LINE_8);
     line(frame, br, bl, color, thickness, LINE_8);
@@ -76,11 +69,11 @@ void cvwrapper::drawBox(InputOutputArray &frame, Scalar color, int x, int y, int
 }
 
 void cvwrapper::drawCircle(InputOutputArray &frame, Scalar color, int x, int y, int r) {
-    circle( frame, Point(x, y),r, color, FILLED, LINE_8 );
+    circle(frame, Point(x, y), r, color, FILLED, LINE_8);
 }
 
 void cvwrapper::drawText(InputOutputArray &frame, std::string text, int x, int y) {
-    putText(frame, text, Point(x, y), FONT_HERSHEY_DUPLEX,1, Scalar (0,0,255), 2, false);
+    putText(frame, text, Point(x, y), FONT_HERSHEY_DUPLEX, 1, Scalar(0, 0, 255), 2, false);
 }
 
 cvwrapper::rtvecs cvwrapper::getLocation() {

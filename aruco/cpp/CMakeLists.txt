@@ -1,14 +1,14 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.18)
 project(arucocpp)
 
 set(CMAKE_CXX_STANDARD 20)
 
-list(APPEND CMAKE_MODULE_PATH "")
-
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-add_executable(arucocpp main.cpp cvwrapper.cpp cvwrapper.h tcpclient.cpp tcpclient.h math.h writevec.h defines.h)
+set(CMAKE_EXE_LINKER_FLAGS " -static-libstdc++") # for windows, for some reason Windows can't find std::vector
+
+add_executable(arucocpp main.cpp cvwrapper.cpp)
 target_link_libraries(arucocpp ${OpenCV_LIBS})
 
 add_executable(calibrate calibrate.cpp)
@@ -18,5 +18,3 @@ add_executable(writemarkers writemarkers.cpp)
 target_link_libraries(writemarkers ${OpenCV_LIBS})
 
 add_executable(test test.cpp)
-
-add_executable(ppc ppc.cpp purePursuitController.h)
