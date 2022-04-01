@@ -29,10 +29,6 @@ public:
         targetCandidates.setStorage(targets);
     }
     Coord getTarget(Vector<Coord> &path, double lookahead, Coord position) {
-        // Serial.print("PPC data:: path.size(): ");
-        // Serial.print(path.size());
-        // Serial.print(" index: ");
-        // Serial.println(index);
 
         for (int i = index; i < path.size(); i++) {
             Coord current = path.at(i);
