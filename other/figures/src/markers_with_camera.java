@@ -1,4 +1,5 @@
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.core.PGraphics;
 
 public class markers_with_camera extends PApplet {
@@ -6,26 +7,27 @@ public class markers_with_camera extends PApplet {
     public void drawAxes() {
         pushStyle();
         textSize(32);
-        textAlign(CENTER, CENTER);
+        textAlign(LEFT, TOP);
 
         // X-axis
         strokeWeight(5);
+        noFill();
         stroke(255, 0, 0);
         line(50, 50, 750, 50);
         line(750 - 10, 50 - 10, 750, 50);
         line(750 - 10, 50 + 10, 750, 50);
-//        fill(255, 0, 0);
-//        text("x",750 + 14, 50 - 6);
-//        noFill();
+        fill(255,0,0);
+        text("$x$",750, 50);
+        noFill();
 
         // Y-axis
         stroke(0, 255, 0);
         line(50, 50, 50, 750);
         line(50 - 10, 750 - 10, 50, 750);
         line(50 + 10, 750 - 10, 50, 750);
-//        fill(0, 255, 0);
-//        text("y",50, 750 + 10);
-//        noFill();
+        fill(0, 255, 0);
+        text("$y$",50, 750);
+        noFill();
 
         // Z-axis
         stroke(0, 0, 255);

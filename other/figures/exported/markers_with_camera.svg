@@ -11,10 +11,14 @@
     ><line y2="50" style="fill:none;" x1="50" x2="750" y1="50"
       /><line y2="50" style="fill:none;" x1="740" x2="750" y1="40"
       /><line y2="50" style="fill:none;" x1="740" x2="750" y1="60"
-      /><line x1="50" x2="50" y1="50" style="fill:none; stroke:lime;" y2="750"
+      /><text x="750" xml:space="preserve" y="82" style="text-rendering:optimizeLegibility; stroke:none;"
+      >$x$</text
+      ><line x1="50" x2="50" y1="50" style="fill:none; stroke:lime;" y2="750"
       /><line x1="40" x2="50" y1="740" style="fill:none; stroke:lime;" y2="750"
       /><line x1="60" x2="50" y1="740" style="fill:none; stroke:lime;" y2="750"
-      /><line x1="40" x2="60" y1="40" style="fill:none; stroke:blue;" y2="60"
+      /><text x="50" y="782" style="fill:lime; text-rendering:optimizeLegibility; stroke:none;" xml:space="preserve"
+      >$y$</text
+      ><line x1="40" x2="60" y1="40" style="fill:none; stroke:blue;" y2="60"
       /><line x1="60" x2="40" y1="40" style="fill:none; stroke:blue;" y2="60"
       /><rect x="360" y="55" width="80" style="fill:white; stroke:none; stroke-width:1;" height="5"
       /><rect x="360" y="55" width="80" style="fill:none; stroke:rgb(240,240,240); stroke-width:1;" height="5"
@@ -28,11 +32,6 @@
     /></g
     ><g style="stroke-linecap:round; font-size:32px; fill-opacity:0.0784; fill:rgb(0,240,240); font-family:'Processing Sans Pro'; stroke:rgb(0,240,240); stroke-opacity:0.0784;"
     ><path style="stroke:none;" d="M430 370 L370 370 L250 50 L550 50"
-    /></g
-    ><g style="fill:yellow; font-size:32px; font-family:'Processing Sans Pro'; stroke-linecap:round; stroke:yellow;"
-    ><line y2="50" style="fill:none;" x1="50" x2="400" y1="50"
-      /><line y2="50" style="fill:none;" x1="400" x2="400" y1="385"
-      /><line y2="50" style="fill:none;" x1="400" x2="50" y1="385"
     /></g
   ></g
 ></svg
