@@ -1,4 +1,4 @@
-function vx = ObjFcn(x, u, horiz, dz)
+function vx = ObjFcn(x, u, horiz, dz, rev, r, rold)
     % Weights
     w1 = 0;
     w2 = 1;
@@ -18,7 +18,6 @@ function vx = ObjFcn(x, u, horiz, dz)
     sum = 0;
     % Objective function
     for i=1:horiz
-        % ADD CONSTRAINT HERE
         sum = sum + w1*dR(xp,r) + w2*dP(xp,r,rold,rev,dz) + w3*z(xp);
         xp = StateEstimate(xp,u,dz);
     end
