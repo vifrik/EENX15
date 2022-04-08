@@ -1,4 +1,4 @@
-function vx = ObjFcn(x, u, horiz, dz, rev, r, rold)
+function vx = ObjFcn(x, u, horiz, dz, rev, points)
     % Weights
     w1 = 0;
     w2 = 1;
@@ -18,7 +18,7 @@ function vx = ObjFcn(x, u, horiz, dz, rev, r, rold)
     sum = 0;
     % Objective function
     for i=1:horiz
-        sum = sum + w1*dR(xp,r) + w2*dP(xp,r,rold,rev,dz) + w3*z(xp);
+        sum = sum + w1*dR(xp,r) + w2*dP(xp,points(i+1,:),points(i,:),rev,dz) + w3*z(xp);
         xp = StateEstimate(xp,u,dz);
     end
 end

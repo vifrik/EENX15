@@ -13,7 +13,7 @@ function xdot = StateFcn(x, u)
     %       u(1): steering angle.
     %       u(2): velocity.
     params = vars();        % Load truck parameters.
-    xdot = zeros(5,1);      % Initialize output variables.
+    xdot = zeros(4,1);      % Initialize output variables.
 
     v1 = u(2)*cos(u(1));    % Velocity in the heading of the truck.
     w1 = u(2)*sin(u(1))/params(2);  % Angular velocity of the heading angle
