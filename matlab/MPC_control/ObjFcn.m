@@ -1,4 +1,4 @@
-function vx = ObjFcn(x, u, horiz, dz, rev, points)
+function sum = ObjFcn(x, u, horiz, dz, rev, points)
     % Weights
     w1 = 0;
     w2 = 1;

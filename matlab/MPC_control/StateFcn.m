@@ -25,5 +25,5 @@ function xdot = StateFcn(x, u)
     xdot(4) = w1 - w2;
 
     l = params(3)+params(1)*cos(x(4));  % Helper variable
-    xdot(3) = sin(x(4))*u(2)/l + params(4)*xdot(4)/l;
+    xdot(3) = sin(x(4))*u(2)/l + params(3)*xdot(4)/l;
 end

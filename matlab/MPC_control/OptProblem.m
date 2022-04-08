@@ -1,4 +1,4 @@
-function vx = OptProblem(points, x, u, rev)
+function out = OptProblem(points, x, u, rev)
     % Parameters and helper functions
     params = vars();
     horiz = 5;  % Prediction horizon
@@ -6,8 +6,8 @@ function vx = OptProblem(points, x, u, rev)
     % Initiate variables
     %vx = [r(1), r(2), x(3), x(4)];
     vx = x;
-    %ux = u;
-    ux = [1,0];
+    ux = u;
+    %ux = [1,0];
     v0 = [vx', ux'];
     % Optimization functions and parameters
     A = [0,0,0,0,1,0
@@ -37,5 +37,5 @@ function vx = OptProblem(points, x, u, rev)
         dR(x,points(end,:)) - dr
         dP(x,points(end,:),points(end-1,:),rev,dz) - df];
     % Minimization function
-    [vx, fval] = fmincon(@(U) ObjFcn(U(1:5), U(5:7), horiz, dz, rev, points), v0, A, b, [], [], [], [], @(U) c(U(1:5), U(5:7), points, rev, dz));
+    [out, fval] = fmincon(@(U) ObjFcn(U(1:5), U(5:7), horiz, dz, rev, points), v0, A, b, [], [], [], [], @(U) c(U(1:5), U(5:7), points, rev, dz));
 end
