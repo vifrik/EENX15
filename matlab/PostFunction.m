@@ -3,6 +3,7 @@
 clf; close all;
 figure('Name','Fordonets bana')%,'units','normalized','outerposition',[0 0 1 1])
 plot(X2,Y2,'b');
+set(gcf,'color','w');
 hold on
 plot(X1,Y1,'m');
 plot(X_waypoints,Y_waypoints,'k:',X_waypointsUp,Y_waypointsUp,'k',X_waypointsLow,Y_waypointsLow,'k');
@@ -10,7 +11,8 @@ title('Fordonets bana');
 hTitle=title(sprintf('Time = %0.2g',tout(1)));
 axis equal;
 xlim([min(X2) max(X1)])
-ylim([min(Y2)-6.3 max(Y1)+1])
+%ylim([min(Y2)-6.3 max(Y1)+1])
+ylim([min(Y2)-1 max(Y1)+1])
 xlabel('X [m]')
 ylabel('Y [m]')
 %------creating the tractor and trailer-----------------------
@@ -53,13 +55,13 @@ medel_dist=100*mean(distance);
 rms_dist=100*sqrt(mean(distance.^2));
 max_dist=100*max(distance);
 median_dist=100*median(distance);
-text(-4,-3,{['Släp'];['Medel:' num2str(round(medel_dist,2,'significant')) ' cm'];['Median:' num2str(round(median_dist,2,'significant')) ' cm'];['RMS:' num2str(round(rms_dist,2,'significant')) ' cm'];['Max:' num2str(round(max_dist,2,'significant')) ' cm']})
+text(6,-2,{['Släp'];['Medel:' num2str(round(medel_dist,2,'significant')) ' cm'];['Median:' num2str(round(median_dist,2,'significant')) ' cm'];['RMS:' num2str(round(rms_dist,2,'significant')) ' cm'];['Max:' num2str(round(max_dist,2,'significant')) ' cm']})
 [xy,distance,t_a]=distance2curve([X_waypoints' Y_waypoints'],[X1 Y1]);
 medel_dist=100*mean(distance);
 rms_dist=100*sqrt(mean(distance.^2));
 max_dist=100*max(distance);
 median_dist=100*median(distance);
-text(-8,-3,{['Dolly'];['Medel:' num2str(round(medel_dist,2,'significant')) ' cm'];['Median:' num2str(round(median_dist,2,'significant')) ' cm'];['RMS:' num2str(round(rms_dist,2,'significant')) ' cm'];['Max:' num2str(round(max_dist,2,'significant')) ' cm']})
+text(6,-4,{['Dolly'];['Medel:' num2str(round(medel_dist,2,'significant')) ' cm'];['Median:' num2str(round(median_dist,2,'significant')) ' cm'];['RMS:' num2str(round(rms_dist,2,'significant')) ' cm'];['Max:' num2str(round(max_dist,2,'significant')) ' cm']})
 
 %----------Wheels-------------------------------------------
 Leftwheel = animatedline('LineWidth',3);
@@ -74,8 +76,9 @@ XwR2 = X1 + X2c(:,1) + lfc*0.1*cos(-theta(:,1)+delta(:,1));
 YwR1 = Y1 + Y2c(:,1) + lfc*0.1*sin(-theta(:,1)+delta(:,1));
 YwR2 = Y1 + Y2c(:,1) - lfc*0.1*sin(-theta(:,1)+delta(:,1));
 %-----------------------------------------------------------
-legend('Släpets bana','Dollyns bana','Mitt','Kant','Kant','Dolly','Trailer','Synhorisont','Hjul', 'Hjul','Location','best')
-        title([path])%, ' med radie ', num2str(R),' m'])
+%legend('Släpets bana','Dollyns bana','Mitt','Kant','Kant','Dolly','Trailer','Synhorisont','Hjul', 'Hjul','Location','best')
+        %title([path])%, ' med radie ', num2str(R),' m'])
+        title('Sisusvåg')
 for i = 1:length(tout)
     clearpoints(Leftwheel);
     clearpoints(Rightwheel);
