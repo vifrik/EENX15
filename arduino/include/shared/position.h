@@ -40,7 +40,7 @@ public:
         timeOld = millis();
     }
 
-    bool getPositionTrailer(float angleMagnetic, PositionData& posTruck, PositionData& posTrailer) {
+    bool getPositionTrailer(uint32_t anglePotentiometer, PositionData& posTruck, PositionData& posTrailer) {
         unsigned char bytesBuffer[15]; 
         int size = SerialUSB.readBytesUntil(byte(0), bytesBuffer, 15);
         if(size != 14) return false;
@@ -48,9 +48,10 @@ public:
         memcpy(&posTruck, bytesBuffer, 14);  
         uint16_t c = crc16(bytesBuffer, 12);
 
-        posTrailer.x = posTruck.x + cos(angleMagnetic) * LENGTH_TRAILER;
-        posTrailer.y = posTruck.y + sin(angleMagnetic) * LENGTH_TRAILER;
-        posTrailer.rz = posTruck.rz + PI + angleMagnetic;
+        //kameran måste sitta ovanpå vinkelmätaren eller translera dit
+        posTrailer.x = posTruck.x - cos(posTruck.rz - anglePotentiometer) * LENGTH_TRAILER;
+        posTrailer.y = posTruck.y - sin(posTruck.rz - anglePotentiometer) * LENGTH_TRAILER;
+        posTrailer.rz = posTruck.rz + PI + anglePotentiometer;
 
         return c == posTruck.crc;
     }
@@ -66,12 +67,9 @@ public:
             return 0;
         }
 
-        float velTruck = sqrt(pow(posTruck.x - oldPosTruck.x, 2) + pow(posTruck.y - oldPosTruck.y, 2)) / dt;
+        float velTruck = -1 * sqrt(pow(posTruck.x - oldPosTruck.x, 2) + pow(posTruck.y - oldPosTruck.y, 2));// / dt;
 
         float angleTrailerWorldDesired = atan2(posDesired.y - posTrailer.y, posDesired.x - posTrailer.x);
-        //float angleTrailerWorldError = angleTrailerWorldDesired - posTrailer.rz + PI;
-
-        //float angleMagneticDesired = angleTrailerWorldDesired + angleTrailerWorldError;   
 
         float d_angleTrailerWorld = (posTrailer.rz - oldAngleTrailerWorld) / dt;
         float d_angleTrailerWorldDesired = (angleTrailerWorldDesired - oldAngleTrailerWorldDesired) / dt;
