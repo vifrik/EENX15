@@ -3,7 +3,7 @@ close all;clc;clear all;
 path = 'Rak bana';
 Horizon = 5;
 Target_speed = 1;
-
+Initial_State = [0,0,0,0];
 %% %%% Vehicle Parameters %%%
 params = vars();
 a1 = params(1);  % Distance between articulation point and rear axle of dolly. 

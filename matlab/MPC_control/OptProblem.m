@@ -23,5 +23,4 @@ function out = OptProblem(points, x, u, rev)
         pi/2];
     % Minimization function
     [out, fval] = fmincon(@(U) ObjFcn(U(1:4), U(5:6), horiz, dz, rev, points), v0, A, b, [], [], [], [], @(U) NonlCond(U(1:4), U(5:6), points, rev, dz));
-
 end
