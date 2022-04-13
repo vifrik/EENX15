@@ -2,9 +2,11 @@
   <library name="library">
     <CLASSES>
       <root url="file://D:/Program/processing-4.0b2/modes/java/libraries/svg/library" />
+      <root url="file:///Applications/Processing.app/Contents/Java/modes/java/libraries/svg/library" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
+    <jarDirectory url="file:///Applications/Processing.app/Contents/Java/modes/java/libraries/svg/library" recursive="false" />
     <jarDirectory url="file://D:/Program/processing-4.0b2/modes/java/libraries/svg/library" recursive="false" />
   </library>
 </component>
