@@ -1,7 +1,7 @@
 %% %%%
 close all;clc;clear all;
 path = 'Rak bana';
-Horizon = 5;
+Horizon = 20;
 Target_speed = 1;
 Initial_State = [0,0,0,0];
 %% %%% Vehicle Parameters %%%
@@ -24,9 +24,9 @@ case 'Rak bana'
     Y_waypointsLow = zeros(1,n);
 
     for i=1:n
-        X_waypoints(i)=-(i/1000);
+        X_waypoints(i)=(i/1000);
         X_waypointsUp(i)=-(i/1000);
-        X_waypointsLow(i)=-(i/1000);
+        X_waypointsLow(i)=(i/1000);
     end
 
     Y_waypointsUp(:) = roadWidth;
