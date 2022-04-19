@@ -37,7 +37,7 @@ int main() {
     bool success;
 
     // Looping over all the images in the directory
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 100; i++) {
         videoCapture.read(frame);
         cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
 
@@ -45,6 +45,13 @@ int main() {
                                             CALIB_CB_ADAPTIVE_THRESH | CALIB_CB_FAST_CHECK | CALIB_CB_NORMALIZE_IMAGE);
 
         if (success) {
+            std::cout << "i : " << i << std::endl;
+
+            // Martin kod
+            cv::imwrite("./img/image_" + std::to_string(i) + ".jpg", frame);
+
+            if (waitKey(50) >= 0) // Close on any key
+                break;
             TermCriteria criteria(3, 30, 0.001);
             cornerSubPix(gray, corner_pts, Size(11, 11), Size(-1, -1), criteria);
             drawChessboardCorners(frame, Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts, success);
@@ -54,7 +61,7 @@ int main() {
         }
 
         //cv::imshow("Image",frame);
-        cv::waitKey(1000);
+        //cv::waitKey(1000);
     }
 
     //destroyAllWindows();
