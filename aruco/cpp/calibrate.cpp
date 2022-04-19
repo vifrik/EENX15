@@ -10,13 +10,41 @@ using namespace cv;
 // Defining the dimensions of checkerboard
 int CHECKERBOARD[2]{6, 9};
 
+std::string
+gstreamer_pipeline(int capture_width, int capture_height, int display_width, int display_height, int framerate,
+                   int flip_method) {
+    return "nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)" + std::to_string(capture_width) +
+           ", height=(int)" +
+           std::to_string(capture_height) + ", framerate=(fraction)" + std::to_string(framerate) +
+           "/1 ! nvvidconv flip-method=" + std::to_string(flip_method) + " ! video/x-raw, width=(int)" +
+           std::to_string(display_width) + ", height=(int)" +
+           std::to_string(display_height) +
+           ", format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink";
+}
+
 int main() {
+    printf("JETSON\n");
+    //står att den ska klara 60 fps i 1280x720, men den kör 30 fps då
+    int capture_width = 640;
+    int capture_height = 480;
+    int display_width = 640;
+    int display_height = 480;
+    int framerate = 120; //https://forums.developer.nvidia.com/t/120-fps-mode-support-removed-for-imx219-sensor/174327/9
+    int flip_method = 0;
+
+    std::string pipeline = gstreamer_pipeline(capture_width,
+                                              capture_height,
+                                              display_width,
+                                              display_height,
+                                              framerate,
+                                              flip_method);
+
     Mat frame;
     VideoCapture videoCapture;
 
     int deviceID = 0;             // 0 = open default camera
     int apiID = cv::CAP_ANY;      // 0 = autodetect default API
-    videoCapture.open(deviceID, apiID);
+    videoCapture.open(pipeline, cv::CAP_GSTREAMER);
 
     // Creating vector to store vectors of 3D points for each checkerboard image
     std::vector<std::vector<cv::Point3f>> objpoints;
@@ -60,6 +88,8 @@ int main() {
             imgpoints.push_back(corner_pts);
         }
 
+        getchar();
+
         //cv::imshow("Image",frame);
         //cv::waitKey(1000);
     }
@@ -76,4 +106,3 @@ int main() {
 
     return 0;
 }
-
