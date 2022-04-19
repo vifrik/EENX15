@@ -1,6 +1,4 @@
-import processing.core.PApplet;
-import processing.core.PFont;
-import processing.core.PGraphics;
+import processing.core.*;
 
 public class markers_with_camera extends PApplet {
 
@@ -47,29 +45,30 @@ public class markers_with_camera extends PApplet {
         }
     }
 
+    PImage marker;
+
     public void settings(){
         size(800, 800);
         this.g = new PGraphics();
+        this.surface = initSurface();
         noLoop();
         beginRecord(SVG, "exported/markers_with_camera.svg");
         noStroke();
+
+        marker = loadImage("marker0.png");
     }
 
     public void draw() {
-        background(30);
+        background(240);
 
         strokeWeight(5.0f);
         stroke(50);
         dottedLine(750, 50, 750, 750, 10);
         dottedLine(50, 750, 750, 750, 10);
+        dottedLine(50, 750, 50, 50, 10);
+        dottedLine(750, 50, 50, 50, 10);
         noStroke();
-        drawAxes();
-
-        // Marker
-        stroke(240);
-        rect((800 - 80) / 2, 50 + 5, 80, 5);
-        rect((800 - 80) / 2 - 200, 50 + 5, 80, 5);
-        rect((800 - 80) / 2 + 200, 50 + 5, 80, 5);
+        //drawAxes();
 
         // Truck and trailer silhouette
         noStroke();
@@ -78,7 +77,7 @@ public class markers_with_camera extends PApplet {
         rect(400 - 40, 400 + 60 + 10, 80, 250);
 
         // Camera triangle
-        fill(0, 240, 240);
+        fill(0xFF26C5F3);
         //triangle(400, 400, 400 + 8, 400 - 30, 400 - 8, 400 - 30);
         beginShape();
         vertex(400 - 8, 400 - 30);
@@ -90,13 +89,17 @@ public class markers_with_camera extends PApplet {
         rect(400 - 12, 400 - 15, 24, 40);
 
         // Camera fov
-        fill(0, 240, 240, 20);
+        fill(0x6426C5F3);
         beginShape();
         vertex(400 + 8, 400 - 30);
         vertex(400 - 8, 400 - 30);
         vertex(250, 50);
         vertex(550, 50);
         endShape();
+
+        image(marker, (800 - 80) / 2, 50 - 40, 80, 80);
+        image(marker, (800 - 80) / 2 - 200, 50 - 40, 80, 80);
+        image(marker, (800 - 80) / 2 + 200, 50 - 40, 80, 80);
 
 //        noFill();
 //        stroke(255, 255, 0);
