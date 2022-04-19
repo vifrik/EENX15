@@ -1,9 +1,9 @@
-function sum = ObjFcn(x, u, horiz, dz, rev, points)
+function sum = ObjFcn(x, u, horiz, dz, rev, points, D)
     % Weights
     w1 = 1;
     w2 = 1e-2;
-    w3 = 1;
-    w4 = 1;
+    w3 = 5e-2;
+    w4 = 5e-2;
     % Helper functions
     params = vars();
     z = @(u)1/u(2);  % Current lethargy
@@ -18,4 +18,5 @@ function sum = ObjFcn(x, u, horiz, dz, rev, points)
         sum = sum + w1*dR(xp,points(i,:)) + w2*z(u);
         xp = StateEstimate(xp,u,dz);
     end
+    sum = sum + w3*D(1) + w4*D(2);
 end

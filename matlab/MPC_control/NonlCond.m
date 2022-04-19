@@ -1,4 +1,4 @@
-function [c,ceq] = NonlCond(x,u,points,rev,dz,horiz,x0)
+function [c,ceq] = NonlCond(x,u,points,rev,dz,horiz,D)
     % Helper functions
     params = vars();
     z = @(u)1/u(2);  % Current lethargy
@@ -8,8 +8,8 @@ function [c,ceq] = NonlCond(x,u,points,rev,dz,horiz,x0)
     px = @(r,rold,rev,dz) r(1) + (-1)^rev*(params(1)+params(3))/dz*(r(1)-rold(1));
     py = @(r,rold,rev,dz) r(2) + (-1)^rev*(params(1)+params(3))/dz*(r(2)-rold(2));
     dP = @(x,r,rold,rev,dz) (x(1) - px(r,rold,rev,dz))^2 + (x(2) - py(r,rold,rev,dz))^2;
-    dr = 10;
-    df = 10;
+    dr = D(1);
+    df = D(2);
     xp = x;
     for i=1:horiz
         xp = StateEstimate(xp,u,dz);
@@ -17,6 +17,6 @@ function [c,ceq] = NonlCond(x,u,points,rev,dz,horiz,x0)
     c = [z(u) - 2
         -z(u)
         dR(xp,points(end,:)) - dr^2
-        dP(xp,points(end,:),points(end-1,:),rev,dz) - df^2]
+        dP(xp,points(end,:),points(end-1,:),rev,dz) - df^2];
     ceq = [];
 end
