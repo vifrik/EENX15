@@ -44,19 +44,20 @@ public class tangential_distortion extends PApplet {
     }
 
     public void draw() {
-        background(30);
+        background(240);
 
         int height = 400;
         int yCenter = 400;
         int yOffset = yCenter - height / 2;
 
         translate(0, -150);
-
-        fill(100, 240);
+        
+        noStroke();
+        fill(100);
         ellipse(200, yCenter, 80, height);
 
         noFill();
-        stroke(200);
+        stroke(30);
         strokeWeight(3);
         //line(50, 200, 200, 200);
         //line(50, 600, 200, 600);
@@ -68,7 +69,7 @@ public class tangential_distortion extends PApplet {
 
         pushStyle();
         noStroke();
-        fill(30);
+        fill(240);
         pushMatrix();
         float angle = 15 * PI / 180;
         translate(600,400);
@@ -86,23 +87,25 @@ public class tangential_distortion extends PApplet {
         pushMatrix();
         translate(600,400);
         rotate(15 * PI / 180);
-        stroke(255, 240);
+        stroke(30, 240);
         strokeWeight(5);
         line(0, -200, 0, 200);
         popMatrix();
-        stroke(255, 0, 0, 100);
+        stroke(255,0,0, 120);
         line(600, 200, 600, 600);
         popStyle();
 
         pushStyle();
-        stroke(240, 0, 0);
+        stroke(255,0,0);
+
         strokeWeight(5);
         arc(600, 400, 350, 350, PI/2, PI/2 + 15 * PI / 180);
         textSize(32);
-        fill(30);            // weird bug
+        fill(240);            // weird bug
         text(" ",0, 0); // something is not cleared properly and drawing empty text seems to fix it
         textAlign(LEFT, TOP);
-        fill(240, 0, 0);
+        stroke(255,0,0);
+        fill(255,0,0);
         text("$p_{1}$", 606, 400 + 150);
         popStyle();
 
