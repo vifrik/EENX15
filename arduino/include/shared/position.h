@@ -10,6 +10,7 @@
 
 #define LENGTH_TRAILER 1.16
 #define LENGTH_TRUCK 0.22
+#define CAMERA_OFFSET 0.04
 #define DELTA_MAX 25
 
 struct PositionData {
@@ -48,7 +49,9 @@ public:
         memcpy(&posTruck, bytesBuffer, 14);  
         uint16_t c = crc16(bytesBuffer, 12);
 
-        //kameran måste sitta ovanpå vinkelmätaren eller translera dit
+        posTruck.x -= cos(posTruck.rz) * CAMERA_OFFSET;
+        posTruck.y -= cos(posTruck.rz) * CAMERA_OFFSET;
+
         posTrailer.x = posTruck.x - cos(posTruck.rz - anglePotentiometer) * LENGTH_TRAILER;
         posTrailer.y = posTruck.y - sin(posTruck.rz - anglePotentiometer) * LENGTH_TRAILER;
         posTrailer.rz = posTruck.rz + PI + anglePotentiometer;
@@ -56,35 +59,35 @@ public:
         return c == posTruck.crc;
     }
 
-    float oldAngleTrailerWorld, oldAngleTrailerWorldDesired, oldTruckRotation;
-    PositionData oldPosTruck;
+    float oldAngleDesired = 0;
+    float oldTheta = 0;
+    float oldError = 0;
+    float errorInteg = 0;
+
+    float k_i = 1f;
+    float k_p = 1f;
+    float k_d = 1f;
+    float 
 
     float steeringAngle(PositionData posTruck, PositionData posTrailer, Coord posDesired) {
         uint32_t timeNow = millis();
         float dt = (timeNow - timeOld) / 1000.0f; // [s]
-        if(dt == 0) {
-            //timeOld = timeNow;
-            return 0;
-        }
-
-        float velTruck = sqrt(pow(posTruck.x - oldPosTruck.x, 2) + pow(posTruck.y - oldPosTruck.y, 2)) / dt;
-        if(velTruck > 0)
-            velTruck*=-1;
-
-        //velTruck = -0.5;
 
         float angleTrailerWorldDesired = atan2(posDesired.y - posTrailer.y, posDesired.x - posTrailer.x);
+        float error = angleTrailerWorldDesired - posTrailer.rz + PI;
 
-        float d_angleTrailerWorld = (posTrailer.rz - oldAngleTrailerWorld) / dt;
-        float d_angleTrailerWorldDesired = (angleTrailerWorldDesired - oldAngleTrailerWorldDesired) / dt;
-        float d_truckRotation = (posTruck.rz - oldTruckRotation) / dt;
-        
-        oldPosTruck = posTruck;
-        oldAngleTrailerWorld = posTrailer.rz;
-        oldAngleTrailerWorldDesired = angleTrailerWorldDesired;
-        oldTruckRotation = posTruck.rz;
+        errorInteg += k_i * error * dt;
+        float d_error = (error - oldError) / dt;
+        oldError = error;
 
-        float deltaTarget = -atan2((d_angleTrailerWorld - d_angleTrailerWorldDesired - d_truckRotation) * LENGTH_TRUCK, velTruck);
+        float angleDesired = k_p * error + k_i * errorInteg + k_d * d_error;
+        float d_angleDesired = angleDesired - oldAngleDesired;
+        oldAngleDesired = angleDesired;
+
+        float d_theta = posTrailer.rz - oldTheta;
+        oldTheta = posTrailer.rz;
+
+        float deltaTarget = -atan2((d_theta - d_angleDesired) * LENGTH_TRUCK, 0.5);
 
 #pragma region Print
         Serial.print("posTruck.x: ");
@@ -105,20 +108,8 @@ public:
         Serial.print("posTrailer.rz: ");
         Serial.println(posTrailer.rz);
 
-        Serial.print("vel: ");
-        Serial.println(velTruck);
-
         Serial.print("angleTrailerWorldDesired: ");
         Serial.println(angleTrailerWorldDesired);
-
-        Serial.print("d_angleTrailerWorld: ");
-        Serial.println(d_angleTrailerWorld);
-
-         Serial.print("d_angleTrailerWorldDesired: ");
-        Serial.println(d_angleTrailerWorldDesired);
-
-        Serial.print("d_truckRotation: ");
-        Serial.println(d_truckRotation);
 
         Serial.print("deltaTarget: ");
         Serial.println(deltaTarget);
