@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
                 Affine3d tMarkerCamera(objectRotationalMatrix, pos.tvecs[i]);
 
                 // transform for camera relative world
-                Affine3d tCameraWorld = markers[c.markerIds[i]] * tMarkerCamera;
+                Affine3d tCameraWorld = markers[c.markerIds[i]] * tMarkerCamera.inv();
 
                 // translation and rotation vectors relative world
                 Vec3d translation = tCameraWorld.translation();
