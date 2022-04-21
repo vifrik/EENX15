@@ -81,10 +81,10 @@ public:
         oldError = error;
 
         float angleDesired = k_p * error + k_i * errorInteg + k_d * d_error;
-        float d_angleDesired = angleDesired - oldAngleDesired;
+        float d_angleDesired = (angleDesired - oldAngleDesired) / dt;
         oldAngleDesired = angleDesired;
 
-        float d_theta = posTrailer.rz - oldTheta;
+        float d_theta = (posTrailer.rz - oldTheta) / dt;
         oldTheta = posTrailer.rz;
 
         float deltaTarget = -atan2((d_theta - d_angleDesired) * LENGTH_TRUCK, 0.5);
