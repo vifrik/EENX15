@@ -70,5 +70,9 @@ void loop() {
         motor.stop();
     }
 
+    Serial.print("potentio: ");
+    Serial.println(phi);
+    Serial.println("------------------------");
+
     //delay(FRAME_DELAY);
 }

@@ -67,7 +67,11 @@ public:
             return 0;
         }
 
-        float velTruck = -1 * sqrt(pow(posTruck.x - oldPosTruck.x, 2) + pow(posTruck.y - oldPosTruck.y, 2)) / dt;
+        float velTruck = sqrt(pow(posTruck.x - oldPosTruck.x, 2) + pow(posTruck.y - oldPosTruck.y, 2)) / dt;
+        if(velTruck > 0)
+            velTruck*=-1;
+
+        //velTruck = -0.5;
 
         float angleTrailerWorldDesired = atan2(posDesired.y - posTrailer.y, posDesired.x - posTrailer.x);
 
@@ -81,7 +85,48 @@ public:
         oldTruckRotation = posTruck.rz;
 
         float deltaTarget = -atan2((d_angleTrailerWorld - d_angleTrailerWorldDesired - d_truckRotation) * LENGTH_TRUCK, velTruck);
-        
+
+#pragma region Print
+        Serial.print("posTruck.x: ");
+        Serial.println(posTruck.x);
+
+        Serial.print("posTruck.y: ");
+        Serial.println(posTruck.y);
+
+        Serial.print("posTruck.rz: ");
+        Serial.println(posTruck.rz);
+
+        Serial.print("posTrailer.x: ");
+        Serial.println(posTrailer.x);
+
+        Serial.print("posTrailer.y: ");
+        Serial.println(posTrailer.y);
+
+        Serial.print("posTrailer.rz: ");
+        Serial.println(posTrailer.rz);
+
+        Serial.print("vel: ");
+        Serial.println(velTruck);
+
+        Serial.print("angleTrailerWorldDesired: ");
+        Serial.println(angleTrailerWorldDesired);
+
+        Serial.print("d_angleTrailerWorld: ");
+        Serial.println(d_angleTrailerWorld);
+
+         Serial.print("d_angleTrailerWorldDesired: ");
+        Serial.println(d_angleTrailerWorldDesired);
+
+        Serial.print("d_truckRotation: ");
+        Serial.println(d_truckRotation);
+
+        Serial.print("deltaTarget: ");
+        Serial.println(deltaTarget);
+
+        Serial.print("dt: ");
+        Serial.println(dt);
+#pragma endregion Region
+
         timeOld = timeNow;
         return deltaTarget;
     }
