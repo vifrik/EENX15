@@ -2,7 +2,9 @@
 
 class Potentiometer {
     public:
-        uint32_t read() {
-            return analogRead(A0);
+        float read() {
+            uint32_t sensorReading = analogRead(A0);
+            float angle = map(sensorReading,250,780,-90,90)*PI/180;
+            return angle;
         }
 };

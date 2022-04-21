@@ -6,7 +6,7 @@
 
 #include "shared/position.h"
 #include "shared/purePursuitController.h"
-#include "shared/magnetic.h"
+//#include "shared/magnetic.h"
 #include "shared/motor.h"
 #include "shared/coord.h"
 #include "shared/servoManager.h"
@@ -19,7 +19,7 @@
 #define MOTOR_SPEED 125
 
 #define LOOKAHEAD_DISTANCE 0.2
-#define SERIAL_BAUDRATE 115200
+#define SERIAL_BAUDRATE 9600
 #define ZERO_ANGLE 0
 #define WAKE_DELAY 3000
 #define FRAME_DELAY 15
@@ -54,7 +54,7 @@ void setup() {
 PositionData posTruck;
 PositionData posTrailer;
 void loop() {
-    uint32_t phi = potentiometer.read();
+    float phi = potentiometer.read();
 
     if(!position.getPositionTrailer(phi, posTruck, posTrailer)) {
         Serial.println("Fail get posttrailer");
@@ -70,5 +70,5 @@ void loop() {
         motor.stop();
     }
 
-    delay(FRAME_DELAY);
+    //delay(FRAME_DELAY);
 }

@@ -40,7 +40,7 @@ public:
         timeOld = millis();
     }
 
-    bool getPositionTrailer(uint32_t anglePotentiometer, PositionData& posTruck, PositionData& posTrailer) {
+    bool getPositionTrailer(float anglePotentiometer, PositionData& posTruck, PositionData& posTrailer) {
         unsigned char bytesBuffer[15]; 
         int size = SerialUSB.readBytesUntil(byte(0), bytesBuffer, 15);
         if(size != 14) return false;
@@ -67,7 +67,7 @@ public:
             return 0;
         }
 
-        float velTruck = -1 * sqrt(pow(posTruck.x - oldPosTruck.x, 2) + pow(posTruck.y - oldPosTruck.y, 2));// / dt;
+        float velTruck = -1 * sqrt(pow(posTruck.x - oldPosTruck.x, 2) + pow(posTruck.y - oldPosTruck.y, 2)) / dt;
 
         float angleTrailerWorldDesired = atan2(posDesired.y - posTrailer.y, posDesired.x - posTrailer.x);
 
