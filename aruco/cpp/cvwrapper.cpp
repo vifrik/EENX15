@@ -9,22 +9,27 @@ cvwrapper::cvwrapper(int index, int apiPreference) {
     dictionary = aruco::getPredefinedDictionary(aruco::DICT_4X4_50);
 }
 
-std::string gstreamer_pipeline (int capture_width, int capture_height, int display_width, int display_height, int framerate, int flip_method) {
-    return "nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)" + std::to_string(capture_width) + ", height=(int)" +
+std::string
+gstreamer_pipeline(int capture_width, int capture_height, int display_width, int display_height, int framerate,
+                   int flip_method) {
+    return "nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)" + std::to_string(capture_width) +
+           ", height=(int)" +
            std::to_string(capture_height) + ", framerate=(fraction)" + std::to_string(framerate) +
-           "/1 ! nvvidconv flip-method=" + std::to_string(flip_method) + " ! video/x-raw, width=(int)" + std::to_string(display_width) + ", height=(int)" +
-           std::to_string(display_height) + ", format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink";
+           "/1 ! nvvidconv flip-method=" + std::to_string(flip_method) + " ! video/x-raw, width=(int)" +
+           std::to_string(display_width) + ", height=(int)" +
+           std::to_string(display_height) +
+           ", format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink";
 }
 
 void cvwrapper::startCapture(int index, int apiPreference) {
 #ifdef JETSON
     printf("JETSON\n");
-	//står att den ska klara 60 fps i 1280x720, men den kör 30 fps då
-	int capture_width = 640 ;
-    int capture_height = 480 ;
-    int display_width = 640 ;
-    int display_height = 480 ;
-    int framerate = 120 ; //https://forums.developer.nvidia.com/t/120-fps-mode-support-removed-for-imx219-sensor/174327/9
+    //står att den ska klara 60 fps i 1280x720, men den kör 30 fps då
+    int capture_width = 1280 ;
+    int capture_height = 720 ;
+    int display_width = 1280 ;
+    int display_height = 720 ;
+    int framerate = 60 ; //https://forums.developer.nvidia.com/t/120-fps-mode-support-removed-for-imx219-sensor/174327/9
     int flip_method = 0 ;
 
     std::string pipeline = gstreamer_pipeline(capture_width,
