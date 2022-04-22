@@ -25,11 +25,11 @@ gstreamer_pipeline(int capture_width, int capture_height, int display_width, int
 int main() {
     printf("JETSON\n");
     //står att den ska klara 60 fps i 1280x720, men den kör 30 fps då
-    int capture_width = 640;
-    int capture_height = 480;
-    int display_width = 640;
-    int display_height = 480;
-    int framerate = 120; //https://forums.developer.nvidia.com/t/120-fps-mode-support-removed-for-imx219-sensor/174327/9
+    int capture_width = 1280;
+    int capture_height = 720;
+    int display_width = 1280;
+    int display_height = 720;
+    int framerate = 60; //https://forums.developer.nvidia.com/t/120-fps-mode-support-removed-for-imx219-sensor/174327/9
     int flip_method = 0;
 
     std::string pipeline = gstreamer_pipeline(capture_width,
@@ -41,10 +41,6 @@ int main() {
 
     Mat frame;
     VideoCapture videoCapture;
-
-    int deviceID = 0;             // 0 = open default camera
-    int apiID = cv::CAP_ANY;      // 0 = autodetect default API
-    videoCapture.open(pipeline, cv::CAP_GSTREAMER);
 
     // Creating vector to store vectors of 3D points for each checkerboard image
     std::vector<std::vector<cv::Point3f>> objpoints;
@@ -64,22 +60,25 @@ int main() {
     std::vector<cv::Point2f> corner_pts;
     bool success;
 
+    int deviceID = 0;             // 0 = open default camera
+    int apiID = cv::CAP_ANY;      // 0 = autodetect default API
+    videoCapture.open(pipeline, cv::CAP_GSTREAMER);
+
+    int found = 0;
     // Looping over all the images in the directory
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 1000; i++) {
         videoCapture.read(frame);
         cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
 
         success = cv::findChessboardCorners(gray, cv::Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts,
                                             CALIB_CB_ADAPTIVE_THRESH | CALIB_CB_FAST_CHECK | CALIB_CB_NORMALIZE_IMAGE);
 
+        cv::imwrite("./img/image_" + std::to_string(i) + ".jpg", frame);
+
         if (success) {
             std::cout << "i : " << i << std::endl;
+            found++;
 
-            // Martin kod
-            cv::imwrite("./img/image_" + std::to_string(i) + ".jpg", frame);
-
-            if (waitKey(50) >= 0) // Close on any key
-                break;
             TermCriteria criteria(3, 30, 0.001);
             cornerSubPix(gray, corner_pts, Size(11, 11), Size(-1, -1), criteria);
             drawChessboardCorners(frame, Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts, success);
@@ -88,21 +87,21 @@ int main() {
             imgpoints.push_back(corner_pts);
         }
 
-        getchar();
+        if (found > 20)
+            break;
 
-        //cv::imshow("Image",frame);
-        //cv::waitKey(1000);
+        getchar();
     }
 
     //destroyAllWindows();
 
     Mat cameraMatrix, distCoeffs, R, T;
-    cv::calibrateCamera(objpoints, imgpoints, cv::Size(gray.rows, gray.cols), cameraMatrix, distCoeffs, R, T);
+    double rms = cv::calibrateCamera(objpoints, imgpoints, cv::Size(gray.rows, gray.cols), cameraMatrix, distCoeffs, R,
+                                     T);
 
     std::cout << "cameraMatrix : " << cameraMatrix << std::endl;
     std::cout << "distCoeffs : " << distCoeffs << std::endl;
-    std::cout << "Rotation vector : " << R << std::endl;
-    std::cout << "Translation vector : " << T << std::endl;
+    std::cout << "RMS : " << rms << std::endl;
 
     return 0;
 }
