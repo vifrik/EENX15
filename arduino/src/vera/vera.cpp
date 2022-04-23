@@ -61,7 +61,7 @@ void loop() {
         return;
     }
 
-    Coord posTarget = ppc.getTarget(path, 75, Coord(posTrailer.x, posTrailer.y));
+    Coord posTarget = ppc.getTarget(path, 0.75, Coord(posTrailer.x, posTrailer.y));
     float delta = position.steeringAngle(posTruck, posTrailer, posTarget);
 
     servoManager.writeAngle(delta);
