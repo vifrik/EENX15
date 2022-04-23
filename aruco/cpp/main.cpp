@@ -97,7 +97,6 @@ int main(int argc, char **argv) {
                 Mat objectRotationalMatrix;
                 Rodrigues(pos.rvecs[i], objectRotationalMatrix);
 
-                // fråga mig inte varför detta funkar... linalg-magi helt enkelt
                 pos.tvecs[i][0] *= -1;
 
                 // transform for marker relative camera
@@ -142,7 +141,7 @@ int main(int argc, char **argv) {
 
 #ifdef DEBUG
             double camX = sumCameraTranslationalVector[0];
-            double camY = sumCameraTranslationalVector[1];
+            double camY = sumCameraTranslationalVector[2];
             double camRZ = sumCameraRotationalVector[2];
 
             Scalar col = Scalar(255, 53, 184); // Red, green, blue color
