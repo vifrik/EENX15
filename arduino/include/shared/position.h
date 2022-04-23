@@ -64,10 +64,9 @@ public:
     float oldError = 0;
     float errorInteg = 0;
 
-    float k_i = 1f;
-    float k_p = 1f;
-    float k_d = 1f;
-    float 
+    float k_i = 1.0f;
+    float k_p = 1.0f;
+    float k_d = 1.0f;
 
     float steeringAngle(PositionData posTruck, PositionData posTrailer, Coord posDesired) {
         uint32_t timeNow = millis();
