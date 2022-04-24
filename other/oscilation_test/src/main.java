@@ -1,5 +1,5 @@
 import processing.core.PApplet;
-import java.lang.Math;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -317,6 +317,12 @@ public class main extends PApplet{
             ppc = new PPC(path);
         }
 
+        float sumError = 0;
+        float k_i = 1.0f;
+        float k_p = 2.0f;
+        float k_d = 1.0f;
+        float oldErr = 0;
+
         void update() {
             if (!shouldUpdate) return;
 
@@ -341,7 +347,12 @@ public class main extends PApplet{
             angle = atan2(target.y - yTrailer, target.x - xTrailer);
             error = angle - theta + PI;
 
-            float angleDesired = -(-angle-error);
+            sumError += k_i * error / 100;
+            float d_error = error - oldErr;
+
+            oldErr = error;
+
+            float angleDesired = k_p * error + k_i * sumError + k_d * d_error;
             float d_angleDesired = (angleDesired - oldAngleDesired);
 
             oldAngleDesired = angleDesired;

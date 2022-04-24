@@ -6,7 +6,9 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <cmath>
+#include <Eigen/Dense>
 
+#include "Kalman.h"
 #include "eulerRotation.h"
 #include "cvwrapper.h"
 #include "writevec.h"
@@ -83,6 +85,47 @@ int main(int argc, char **argv) {
     writevec::readVectorAffine3d(fs_read, "markers", markers);
     fs_read.release();
 
+    int n = 6; // Number of states
+    int m = 2; // Number of measurements
+
+    double dt = 1.0 / 30; // Time step
+
+    Eigen::MatrixXd A(n, n); // System dynamics matrix
+    Eigen::MatrixXd C(m, n); // Output matrix
+    Eigen::MatrixXd Q(n, n); // Process noise covariance
+    Eigen::MatrixXd R(m, m); // Measurement noise covariance
+    Eigen::MatrixXd P(n, n); // Estimate error covariance
+
+    A << 1, dt, 1 / 2 * pow(dt, 2), 0, 0, 0,
+            0, 1, dt, 0, 0, 0,
+            0, 0, 1, 0, 0, 0,
+            0, 0, 0, 1, dt, 1 / 2 * pow(dt, 2),
+            0, 0, 0, 0, 1, dt,
+            0, 0, 0, 0, 0, 1;
+    C << 1, 0, 0, 0, 0, 0,
+            0, 0, 0, 1, 0, 0;
+
+    Q << 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0;
+    R << 0.05, 0, 0, 0.05;
+    P << 300, 0, 0, 0, 0, 0,
+            0, 300, 0, 0, 0, 0,
+            0, 0, 300, 0, 0, 0,
+            0, 0, 0, 300, 0, 0,
+            0, 0, 0, 0, 300, 0,
+            0, 0, 0, 0, 0, 300;
+
+    Kalman kalman(dt, A, C, Q, R, P);
+
+    Eigen::VectorXd x0(n);
+    double t = 0;
+    x0 << 0, 0, 0, 0, 0, 0;
+    kalman.init(t, x0);
+
     for (;;) {
         Mat frame;
         c.readFrame(frame); // Get the current frame
@@ -91,13 +134,11 @@ int main(int argc, char **argv) {
             // Get rotational vecs and translational vecs of markers
             cvwrapper::rtvecs pos = c.getLocation(); // relative pos and rot of marker in relation to camera
 
-            double weightTotal = 0;
-            Vec3d sumCameraRotationalVector, sumCameraTranslationalVector;
+            Vec3d sumCameraRotationalVector;
             for (int i = 0; i < c.numberOfMarkers(); i++) {
                 Mat objectRotationalMatrix;
                 Rodrigues(pos.rvecs[i], objectRotationalMatrix);
 
-                // fråga mig inte varför detta funkar... linalg-magi helt enkelt
                 pos.tvecs[i][0] *= -1;
 
                 // transform for marker relative camera
@@ -110,19 +151,13 @@ int main(int argc, char **argv) {
                 Vec3d translation = tCameraWorld.translation();
                 Vec3d rotation = eulerRotation::rotationMatrixToEulerAngles((Mat3d) tCameraWorld.rotation());
 
-                // 1/(dx^2 * dy^3 * dz^3)
-                double weight = 1 / (pow(pos.tvecs[i][2], 2) * pow(pos.tvecs[i][0], 2) * pow(pos.tvecs[i][1], 2));
-                sumCameraTranslationalVector += weight * translation;
-                sumCameraRotationalVector += weight * rotation;
-                weightTotal += weight;
+                Eigen::VectorXd m1(m);
+                m1 << translation[0], translation[2];
+                kalman.update(m1);
+
+                sumCameraRotationalVector = rotation;
             }
 
-            // calculate weighted average
-            sumCameraTranslationalVector /= weightTotal;
-            sumCameraRotationalVector /= weightTotal;
-
-            sumCameraRotationalVector(2) += -M_PI_2; // Make zero rotation in the direction of the x-axis
-            //std::cout << sumCameraTranslationalVector[0] << " " << sumCameraTranslationalVector[1] << std::endl;
 #ifdef SERIAL
             unsigned char char_array[15]; // 4 bytes * 3 floats + null terminator, 4+4+4+1 = 13
             float x = sumCameraTranslationalVector[0];
@@ -141,8 +176,8 @@ int main(int argc, char **argv) {
 #endif
 
 #ifdef DEBUG
-            double camX = sumCameraTranslationalVector[0];
-            double camY = sumCameraTranslationalVector[1];
+            double camX = kalman.state()[0];
+            double camY = kalman.state()[3];
             double camRZ = sumCameraRotationalVector[2];
 
             Scalar col = Scalar(255, 53, 184); // Red, green, blue color
