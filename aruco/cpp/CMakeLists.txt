@@ -9,7 +9,7 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 
 set(CMAKE_EXE_LINKER_FLAGS " -static-libstdc++") # for windows, for some reason Windows can't find std::vector
 
-add_executable(arucocpp main.cpp cvwrapper.cpp)
+add_executable(arucocpp main.cpp cvwrapper.cpp Kalman.h Kalman.cpp Kalman.cpp Kalman.h)
 target_link_libraries(arucocpp ${OpenCV_LIBS} Eigen3::Eigen)
 
 add_executable(calibrate calibrate.cpp)

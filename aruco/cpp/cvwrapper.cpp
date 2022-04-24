@@ -2,7 +2,11 @@
 // Created by Viktor on 2022-02-19.
 //
 
+#include <opencv2/opencv.hpp>
 #include "cvwrapper.h"
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/videoio.hpp>
 
 cvwrapper::cvwrapper(int index, int apiPreference) {
     startCapture(index, apiPreference);
@@ -117,6 +121,10 @@ cvwrapper::rtvecs cvwrapper::getLocation() {
 }
 
 void cvwrapper::show(InputOutputArray &frame) {
+    /*Mat temp;
+    undistort(frame, temp, cameraMatrix, distCoeffs);
+    imwrite("calibresult.png", temp);
+    exit(1);*/
     imshow("Live preview", frame);
 }
 

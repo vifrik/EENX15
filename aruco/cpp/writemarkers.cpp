@@ -9,22 +9,22 @@ using namespace cv;
 int main(int argc, char **argv) {
     std::vector<Affine3d> markers;
 
-    Vec3d r1(-M_PI_2, 0, 0);
+    Vec3d r1(0, 0, 0);
     Vec3d t1(1.0, 0, 0);
     Affine3d marker1(eulerRotation::eulerAnglesToRotationMatrix(r1), t1);
     markers.push_back(marker1);
 
-    Vec3d r2(-M_PI_2, 0, -M_PI_2);
+    Vec3d r2(0, 0, -M_PI_2);
     Vec3d t2(0, 1.0, 0);
     Affine3d marker2(eulerRotation::eulerAnglesToRotationMatrix(r2), t2);
     markers.push_back(marker2);
 
-    Vec3d r3(-M_PI_2, 0, M_PI);
+    Vec3d r3(0, 0, M_PI);
     Vec3d t3(1.0, 2.0, 0);
     Affine3d marker3(eulerRotation::eulerAnglesToRotationMatrix(r3), t3);
     markers.push_back(marker3);
 
-    Vec3d r4(-M_PI_2, 0, 0);
+    Vec3d r4(0, 0, 0);
     Vec3d t4(0, 0, 0);
     Affine3d marker4(eulerRotation::eulerAnglesToRotationMatrix(r4), t4);
     markers.push_back(marker4);
@@ -34,4 +34,3 @@ int main(int argc, char **argv) {
     fs_write.release();
 
     return 0;
-}
