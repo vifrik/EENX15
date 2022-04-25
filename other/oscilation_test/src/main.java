@@ -42,9 +42,9 @@ public class main extends PApplet{
             PathType pathType = PathType.SINE;
 
             void rollColor() {
-                r = random(255);
-                g = random(255);
-                b = random(255);
+                r = 34;// = random(255);
+                g = 139;//= random(255);
+                b = 34;//= random(255);
             }
 
             public PathOptionData() {
@@ -444,7 +444,7 @@ public class main extends PApplet{
 //        }
 
         for (Coord coord : refPath) {
-            fill(230);
+            fill(30);
             circle(coord.x, coord.y, roadThickness);
         }
         popStyle();
@@ -553,7 +553,7 @@ public class main extends PApplet{
     }
 
     public void draw() {
-        background(30);
+        background(240);
         noStroke();
         optionManager.draw();
         drawPaths();
