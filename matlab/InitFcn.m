@@ -1,7 +1,12 @@
 %% %%% Test case definiton %%%%%%%%%%%%%%%%%%%%%%%% %%
     close all;clc;clear all;
-    path = 'Parkering_2';  %'Rak bana'  'Stor kurva' 'Skarp kurva' 'Sinusvåg' 
-    desiredSpeed = -.5;  % Longitudinal Speed [m/s]
+    path = 'Sinusvåg';  %'Rak bana'  'Stor kurva' 'Skarp kurva' 'Sinusvåg' 
+    
+    %desiredSpeed = -1;  % Longitudinal Speed [m/s]
+    
+    desiredSpeed = [-0.2, -0.2];  % Longitudinal Speed [m/s] before and after an eventuall direction change
+    dirChange = 0.1;    % Changes the "speed" of the dolly to desiredSpeed(2) after dirChange % of the course
+    
     LookDistance  = 0.4; %Look-ahead distance, bra värden; 0.375, 0.4, 0.4
 %% %%% Vehicle parameters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     mm = 1e-3; %mm to m conversion
@@ -14,6 +19,23 @@
 %% %%%%%%%% Waypoints %%%%%%%%%%%%%
 % creating the trajectory
 switch path
+
+case 'Test'
+    D1 = 15;
+    n = 100;
+    roadWidth = 0.2;
+    X_waypoints = linspace(0,D1,n);
+    X_waypointsUp = linspace(0,D1,n);
+    X_waypointsLow = linspace(0,D1,n);
+
+    Y_waypoints = zeros(1,n);
+    Y_waypointsUp = roadWidth.*ones(1,n);
+    Y_waypointsLow = -roadWidth.*ones(1,n);
+
+    dist_between_indx = abs(D1)/length(X_waypoints)
+
+    plot(X_waypoints, Y_waypoints)
+
 case 'Rak bana'
 %----------------Rak bana----------------
     n = 20000;
@@ -76,7 +98,7 @@ case 'Stor kurva'
     X_waypointsUp(16001:20000) = -(3+R-roadWidth);
     X_waypointsLow(16001:20000) = -(3+R+roadWidth);
     
-    X_waypoints = -1.*X_waypoints;
+    %X_waypoints = -1.*X_waypoints;
 
     plot(X_waypoints,Y_waypoints,'b--')
 %----------------Skarp kurva----------------
@@ -124,88 +146,106 @@ case 'Skarp kurva'
 
 %----------------Sinus----------------
 case 'Sinusvåg'
-    magnitude = 0.6;
-    roadWidth=0.2;
+    magnitude = 0.3;
+    roadWidth= 0.5;
+    %frequency = 8;
+    dist = -15;
+    offset = L2 + 0.5;
 
-    X_waypoints = linspace(-L2,-15,15000);
+    X_waypoints = linspace(-offset,dist,15000);
     
-    Y_waypoints = (sin(X_waypoints+L2+pi/2+0.1)-1)*magnitude;
+    Y_waypoints = sin(X_waypoints + offset + pi/2);
+    Y_waypoints = Y_waypoints - Y_waypoints(1);
 
-    X_waypointsUp=X_waypoints-(roadWidth*cos(X_waypoints))./(sqrt(1+(cos(X_waypoints)*magnitude).^2));
-    Y_waypointsUp=(sin(X_waypoints+L2+pi/2+0.1)-1)*magnitude + roadWidth./(sqrt(1+(cos(X_waypoints)*magnitude).^2));
+    %Y_waypoints = (sin(X_waypoints+L2+pi/2+0.1)-1)*magnitude;
+    %Y_waypoints = flip((sin((X_waypoints + pi/2)*frequency))*magnitude);
 
-    X_waypointsLow = X_waypoints+((roadWidth*cos(X_waypoints)*magnitude))./(sqrt(1+(cos(X_waypoints)*magnitude).^2));
-    Y_waypointsLow = (sin(X_waypoints+L2+pi/2+0.1)-1)*magnitude - roadWidth./(sqrt(1+(cos(X_waypoints)*magnitude).^2));
+%     X_waypointsUp=X_waypoints-(roadWidth*cos(X_waypoints))./(sqrt(1+(cos(X_waypoints)*magnitude).^2));
+%     Y_waypointsUp=(sin(X_waypoints+L2+pi/2+0.1)-1)*magnitude + roadWidth./(sqrt(1+(cos(X_waypoints)*magnitude).^2));
+% 
+%     X_waypointsLow = X_waypoints+((roadWidth*cos(X_waypoints)*magnitude))./(sqrt(1+(cos(X_waypoints)*magnitude).^2));
+%     Y_waypointsLow = (sin(X_waypoints+L2+pi/2+0.1)-1)*magnitude - roadWidth./(sqrt(1+(cos(X_waypoints)*magnitude).^2));
+%     
+    X_waypointsUp = X_waypoints;
+    X_waypointsLow = X_waypoints;
+    
+    Y_waypointsUp = Y_waypoints + (roadWidth/2);
+    Y_waypointsLow = Y_waypoints - (roadWidth/2);
 
-X_waypoints(end)=NaN;
-Y_waypoints(end)=NaN;
+    %X_waypoints(end)=NaN;
+    %Y_waypoints(end)=NaN;
+    
+%     Y_waypoints = Y_waypoints + 4;
+%     Y_waypointsUp = Y_waypointsUp + 4;
+%     Y_waypointsLow = Y_waypointsLow + 4;
+    
+    set(gcf,'color','w');
+    plot(X_waypoints,Y_waypoints,'b--')
+    hold on
+    plot(X_waypointsUp, Y_waypointsUp,'k')
+    plot(X_waypointsLow, Y_waypointsLow,'k')
+    title('Sinusvåg')
+    axis equal
+
+    xlim([min(X_waypoints) max(X_waypoints)])
+    ylim([min(Y_waypoints)-1 max(Y_waypoints)+1])
+
 
 case 'Parkering_2'
-    L1 = 10;
-    L2 = 3;
-    R1 = 2;
-    L3 = 2;
+    D1 = 10;
+    D2 = 5;
+    R1 = 4;
+    D3 = 3;
 
     %roadWidth=0.4;
     roadWidth=0.2;
     n = 250; % Upplösning
 
-    %% L1
-    X_waypoints_1 = linspace(0,L1,n*3);
-    X_waypointsUp = linspace(0,L1,n);
-    X_waypointsLow = linspace(0,L1,n);
+    %% D1
+    X_waypoints = linspace(-L2,D1,3*n);
+    X_waypointsUp = linspace(-L2,D1,3*n);
+    X_waypointsLow = linspace(-L2,D1,3*n);
 
-    Y_waypoints_1 = zeros(1,n*3);
-    Y_waypointsUp = roadWidth.*ones(1,n);
-    Y_waypointsLow = -roadWidth.*ones(1,n);
+    Y_waypoints = zeros(1,3*n);
+    Y_waypointsUp = roadWidth.*ones(1,3*n);
+    Y_waypointsLow = -roadWidth.*ones(1,3*n);
 
-    %% L2
-    X_waypoints_2 = linspace(L1, L1-L2, n);
-    X_waypointsUp = [X_waypointsUp,linspace(L1, L1-L2, n)];
-    X_waypointsLow = [X_waypointsLow,linspace(L1, L1-L2, n)];
+    %% D2
+    X_waypoints = [X_waypoints, linspace(D1, D1-D2, n)];
+    X_waypointsUp = [X_waypointsUp,linspace(D1, D1-D2, n)];
+    X_waypointsLow = [X_waypointsLow,linspace(D1, D1-D2, n)];
 
-    Y_waypoints_2 = zeros(1,n);
+    Y_waypoints = [Y_waypoints, zeros(1,n)];
     Y_waypointsUp = [Y_waypointsUp, roadWidth.*ones(1,n)];
     Y_waypointsLow = [Y_waypointsLow, -roadWidth.*ones(1,n)];
 
     %% R1
-    X_waypoints_2 = [X_waypoints_2, L1-L2 + R1.*cos(linspace(pi/2,pi,n))];
-    X_waypointsUp = [X_waypointsUp, (L1-L2 + (R1+roadWidth).*cos(linspace(pi/2,pi,n)))];
-    X_waypointsLow = [X_waypointsLow, L1-L2 + (R1-roadWidth).*cos(linspace(pi/2,pi,n))];
+    X_waypoints = [X_waypoints, D1-D2 + R1.*cos(linspace(pi/2,pi,n))];
+    X_waypointsUp = [X_waypointsUp, (D1-D2 + (R1+roadWidth).*cos(linspace(pi/2,pi,n)))];
+    X_waypointsLow = [X_waypointsLow, D1-D2 + (R1-roadWidth).*cos(linspace(pi/2,pi,n))];
 
-    Y_waypoints_2 = [Y_waypoints_2, R1.*sin(linspace(pi/2,pi,n))-R1];
+    Y_waypoints = [Y_waypoints, R1.*sin(linspace(pi/2,pi,n))-R1];
     Y_waypointsUp = [Y_waypointsUp, (R1+roadWidth).*sin(linspace(pi/2,pi,n))-R1];
     Y_waypointsLow = [Y_waypointsLow, (R1-roadWidth).*sin(linspace(pi/2,pi,n))-R1];
 
 
-    %% L3
-    X_waypoints_2 = [X_waypoints_2, linspace(L1-L2-R1, L1-L2-R1, n)];
-    X_waypointsUp = [X_waypointsUp, linspace(L1-L2-R1-roadWidth, L1-L2-R1-roadWidth, n)];
-    X_waypointsLow = [X_waypointsLow, linspace(L1-L2-R1+roadWidth, L1-L2-R1+roadWidth, n)];
+    %% D3
+    X_waypoints = [X_waypoints, linspace(D1-D2-R1, D1-D2-R1, n)];
+    X_waypointsUp = [X_waypointsUp, linspace(D1-D2-R1-roadWidth, D1-D2-R1-roadWidth, n)];
+    X_waypointsLow = [X_waypointsLow, linspace(D1-D2-R1+roadWidth, D1-D2-R1+roadWidth, n)];
 
-    Y_waypoints_2 = [Y_waypoints_2, linspace(-R1,-R1-L3,n)];
-    Y_waypointsUp = [Y_waypointsUp, linspace(-R1,-R1-L3,n)];
-    Y_waypointsLow = [Y_waypointsLow, linspace(-R1,-R1-L3,n)];
+    Y_waypoints = [Y_waypoints, linspace(-R1,-R1-D3,n)];
+    Y_waypointsUp = [Y_waypointsUp, linspace(-R1,-R1-D3,n)];
+    Y_waypointsLow = [Y_waypointsLow, linspace(-R1,-R1-D3,n)];
 
     %X_waypoints = -1.*X_waypoints;
     %X_waypointsUp = -1.*X_waypointsUp;
     %X_waypointsLow = -1.*X_waypointsLow;
     
-    X_waypoints_1 = -1.*X_waypoints_1;
-    X_waypoints_2 = -1.*X_waypoints_2;
-
-    Y_waypoints_1 = -1.*Y_waypoints_1;
-    Y_waypoints_2 = -1.*Y_waypoints_2;
-
-    Index = 1;
-
-    figure(1)
-    plot(X_waypoints_1,Y_waypoints_1,'b--')
-    title('Forward')
-    figure(2)
-    plot(X_waypoints_2,Y_waypoints_2,'b--')
-    title('Reverse')
-    %plot(X_waypointsUp, Y_waypointsUp,'k')
-    %plot(X_waypointsLow, Y_waypointsLow,'k')
+    set(gcf,'color','w');
+    plot(X_waypoints,Y_waypoints,'b--')
+    hold on
+    plot(X_waypointsUp, Y_waypointsUp,'k')
+    plot(X_waypointsLow, Y_waypointsLow,'k')
 
 end
