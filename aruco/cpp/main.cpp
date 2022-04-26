@@ -137,20 +137,23 @@ int main(int argc, char **argv) {
 
             Vec3d sumCameraRotationalVector;
             for (int i = 0; i < c.numberOfMarkers(); i++) {
-                Mat objectRotationalMatrix;
-                Rodrigues(pos.rvecs[i], objectRotationalMatrix);
+                //kameras rotation relativt markör
+                Mat rel_rot;
+                Rodrigues(pos.rvecs[i], rel_rot);
+                rel_rot = rel_rot.t();
 
-                pos.tvecs[i][0] *= -1;
+                //kameras absoluta rotation
+                Mat abs_rot = markers[c.markerIds[i]].rotation() * rel_rot;
 
-                // transform for marker relative camera
-                Affine3d tMarkerCamera(objectRotationalMatrix, pos.tvecs[i]);
-
-                // transform for camera relative world
-                Affine3d tCameraWorld = markers[c.markerIds[i]] * tMarkerCamera.inv();
+                //kameras absoluta position + flippa y - z
+                MatExpr abs_pos = rel_rot*(-1*pos.tvecs[i]);
+                double x = ((Mat)abs_pos).at<double>(0,0) + markers[c.markerIds[i]].translation()[0];
+                double y = ((Mat)abs_pos).at<double>(0,2) + markers[c.markerIds[i]].translation()[2];
+                double z = ((Mat)abs_pos).at<double>(0,1) + markers[c.markerIds[i]].translation()[1];
 
                 // translation and rotation vectors relative world
-                Vec3d translation = tCameraWorld.translation();
-                Vec3d rotation = eulerRotation::rotationMatrixToEulerAngles((Mat3d) tCameraWorld.rotation());
+                Vec3d translation(x,y,z);
+                Vec3d rotation = eulerRotation::rotationMatrixToEulerAngles(abs_rot);
 
                 Eigen::VectorXd m1(m);
                 m1 << translation[0], translation[2];
