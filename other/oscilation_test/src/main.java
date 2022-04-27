@@ -398,6 +398,46 @@ public class main extends PApplet{
         }
     }
 
+    public void setSPath() {
+        refPath.clear();
+        final float points = 1000;
+        float resolution = 1200 / points;
+
+        for (int i = 0; i < 200; i++) {
+            Coord position = new Coord(resolution * i, 300.0f);
+            refPath.add(position);
+        }
+
+        float radius = 200;
+        Coord origin = new Coord(resolution * 199, 300.0f + radius);
+        for (int i = 0; i < 400; i++) {
+            float angle = -PI / 2 + PI / 2 * i / 400;
+
+            Coord position = new Coord(origin.x + cos(angle) * radius, origin.y + sin(angle) * radius);
+            refPath.add(position);
+        }
+
+        Coord origin2 = new Coord(origin.x + radius, origin.y);
+        for (int i = 0; i < 100; i++) {
+            Coord position = new Coord(origin2.x, origin2.y + resolution * i);
+            refPath.add(position);
+        }
+
+        Coord origin3 = new Coord(origin2.x + radius, origin2.y + resolution * 99);
+        for (int i = 0; i < 400; i++) {
+            float angle = -PI - PI / 2 * i / 400;
+
+            Coord position = new Coord(origin3.x + cos(angle) * radius, origin3.y + sin(angle) * radius);
+            refPath.add(position);
+        }
+
+        Coord origin4 = new Coord(origin3.x, origin3.y + radius);
+        for (int i = 0; i < 200; i++) {
+            Coord position = new Coord(origin4.x + resolution * i, origin4.y);
+            refPath.add(position);
+        }
+    }
+
     public void settings(){
         size(1200, 800);
         smooth(2);
@@ -555,6 +595,7 @@ public class main extends PApplet{
     public void draw() {
         background(240);
         noStroke();
+        //translate(0, -200);
         optionManager.draw();
         drawPaths();
     }
