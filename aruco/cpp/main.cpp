@@ -80,6 +80,7 @@ int main(int argc, char **argv) {
     }
 #endif
 
+
     std::vector<Affine3d> markers;
     FileStorage fs_read("markers.txt", 0);
     writevec::readVectorAffine3d(fs_read, "markers", markers);
@@ -136,29 +137,31 @@ int main(int argc, char **argv) {
             cvwrapper::rtvecs pos = c.getLocation(); // relative pos and rot of marker in relation to camera
 
             Vec3d sumCameraRotationalVector;
-            for (int i = 0; i < c.numberOfMarkers(); i++) {
+            Vec3d sumCameraTranslationalVector;
+            for (int i = 0; i < c.numberOfGridboards(); i++) {
                 //kameras rotation relativt markör
                 Mat rel_rot;
                 Rodrigues(pos.rvecs[i], rel_rot);
                 rel_rot = rel_rot.t();
 
                 //kameras absoluta rotation
-                Mat abs_rot = markers[c.markerIds[i]].rotation() * rel_rot;
+                Mat abs_rot = markers[c.gridboardIds[i]].rotation() * rel_rot;
 
                 //kameras absoluta position + flippa y - z
-                MatExpr abs_pos = rel_rot*(-1*pos.tvecs[i]);
-                double x = ((Mat)abs_pos).at<double>(0,0) + markers[c.markerIds[i]].translation()[0];
-                double y = ((Mat)abs_pos).at<double>(0,2) + markers[c.markerIds[i]].translation()[2];
-                double z = ((Mat)abs_pos).at<double>(0,1) + markers[c.markerIds[i]].translation()[1];
+                MatExpr abs_pos = rel_rot * (-1 * pos.tvecs[i]);
+                double x = ((Mat) abs_pos).at<double>(0, 0) + markers[c.gridboardIds[i]].translation()[0];
+                double y = ((Mat) abs_pos).at<double>(0, 1) + markers[c.gridboardIds[i]].translation()[1];
+                double z = ((Mat) abs_pos).at<double>(0, 2) + markers[c.gridboardIds[i]].translation()[2];
 
                 // translation and rotation vectors relative world
-                Vec3d translation(x,y,z);
+                Vec3d translation(x, y, z);
                 Vec3d rotation = eulerRotation::rotationMatrixToEulerAngles(abs_rot);
 
                 Eigen::VectorXd m1(m);
                 m1 << translation[0], translation[2];
                 kalman.update(m1);
 
+                sumCameraTranslationalVector = translation;
                 sumCameraRotationalVector = rotation;
             }
 
@@ -190,6 +193,7 @@ int main(int argc, char **argv) {
             c.drawBox(frame, col, 0, 0, 400, 400);
             c.drawCircle(frame, col, camX * 400 / 2,
                          camY * 400 / 2, 5);
+
             std::ostringstream s;
             s << "X: " << camX
               << " Y: " << camY

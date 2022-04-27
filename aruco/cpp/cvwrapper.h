@@ -21,6 +21,7 @@ private:
     Ptr<aruco::Dictionary> dictionary;
     Ptr<aruco::DetectorParameters> parameters = aruco::DetectorParameters::create();
     std::vector<std::vector<Point2f>> markerCorners, rejectedCandidates;
+    std::vector<cv::Ptr<aruco::GridBoard>> gridboards;
 
     // Raspberry pi camera
     // cameraMatrix : [554.8647168500464, 0, 304.1026427291827;
@@ -83,6 +84,8 @@ public:
 
     int numberOfMarkers();
 
+    int numberOfGridboards();
+
     void drawBoundingBoxes(InputOutputArray &frame, Scalar color);
 
     void drawIds(InputOutputArray &frame, Scalar color);
@@ -98,6 +101,8 @@ public:
     rtvecs getLocation();
 
     std::vector<int> markerIds;
+
+    std::vector<int> gridboardIds;
 };
 
 

@@ -11,6 +11,18 @@
 cvwrapper::cvwrapper(int index, int apiPreference) {
     startCapture(index, apiPreference);
     dictionary = aruco::getPredefinedDictionary(aruco::DICT_4X4_50);
+
+    for (int i = 0; i < 4; i++) {
+        cv::Ptr<aruco::GridBoard> board =
+                aruco::GridBoard::create(2, 2, 0.06, 0.01,
+                                         aruco::getPredefinedDictionary(aruco::DICT_4X4_50),
+                                         i * 4);
+        gridboards.push_back(board);
+        // code below used for saving boards as images
+        /*Mat boardImage;
+        board->draw(Size(1200, 1200), boardImage, 1200 / (0.05 * 2 + 0.02) * 0.01, 1);
+        imwrite("board_" + std::to_string(i) + ".png", boardImage);*/
+    }
 }
 
 std::string
@@ -78,9 +90,6 @@ void cvwrapper::detect(InputOutputArray &frame) {
 
 void cvwrapper::drawBoundingBoxes(InputOutputArray &frame, Scalar color) {
     aruco::drawDetectedMarkers(frame, markerCorners, noArray(), color);
-    for (int i = 0; i < markerIds.size(); i++) {
-        aruco::drawAxis(frame, cameraMatrix, distCoeffs, rtVecs.rvecs[i], rtVecs.tvecs[i], 0.05);
-    }
 }
 
 void cvwrapper::drawIds(InputOutputArray &frame, Scalar color) {
@@ -114,9 +123,24 @@ void cvwrapper::drawText(InputOutputArray &frame, std::string text, int x, int y
 }
 
 cvwrapper::rtvecs cvwrapper::getLocation() {
-    // Marker is 14 cm
-    aruco::estimatePoseSingleMarkers(markerCorners, 0.14, cameraMatrix,
-                                     distCoeffs, rtVecs.rvecs, rtVecs.tvecs);
+    rtVecs.rvecs.clear();
+    rtVecs.tvecs.clear();
+    gridboardIds.clear();
+
+    for (int i = 0; i < gridboards.size(); i++) {
+        Vec3d rvec, tvec;
+        int valid = aruco::estimatePoseBoard(markerCorners, markerIds, gridboards.at(i), cameraMatrix, distCoeffs, rvec,
+                                             tvec);
+        if (valid > 0) {
+            Vec3d e(1, 1, 0);
+            tvec += rvec * e * (0.06 + 0.01 / 2);
+
+            rtVecs.rvecs.push_back(rvec);
+            rtVecs.tvecs.push_back(tvec);
+            gridboardIds.push_back(i);
+        }
+    }
+
     return cvwrapper::rtVecs;
 }
 
@@ -125,11 +149,18 @@ void cvwrapper::show(InputOutputArray &frame) {
     undistort(frame, temp, cameraMatrix, distCoeffs);
     imwrite("calibresult.png", temp);
     exit(1);*/
+    if (gridboardIds.size())
+        drawFrameAxes(frame, cameraMatrix, distCoeffs, rtVecs.rvecs[0], rtVecs.tvecs[0], 0.05);
     imshow("Live preview", frame);
 }
 
 int cvwrapper::numberOfMarkers() {
     return markerIds.size();
+}
+
+
+int cvwrapper::numberOfGridboards() {
+    return gridboardIds.size();
 }
 
 
