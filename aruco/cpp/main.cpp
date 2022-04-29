@@ -7,6 +7,7 @@
 #include <opencv2/opencv.hpp>
 #include <cmath>
 #include <Eigen/Dense>
+#include <fstream>
 
 #include "Kalman.h"
 #include "eulerRotation.h"
@@ -59,6 +60,11 @@ int main(int argc, char **argv) {
 
     cvwrapper c = cvwrapper(0, CAP_ANY);
 
+    std::ofstream out;
+    std::ofstream out_kal;
+    out.open("out.txt");
+    out_kal.open("out_kalman.txt");
+
 #ifdef SERIAL
     // Open port
     fd = open(SERIAL_PORT, O_RDWR | O_NOCTTY | O_NDELAY);
@@ -79,7 +85,6 @@ int main(int argc, char **argv) {
         exit(-1);
     }
 #endif
-
 
     std::vector<Affine3d> markers;
     FileStorage fs_read("markers.txt", 0);
@@ -106,13 +111,13 @@ int main(int argc, char **argv) {
     C << 1, 0, 0, 0, 0, 0,
             0, 0, 0, 1, 0, 0;
 
-    Q << pow(dt, 4) / 4, pow(dt, 3) / 3, pow(dt, 2) / 2, 0, 0, 0,
-            pow(dt, 3) / 3, pow(dt, 2), dt, 0, 0, 0,
-            pow(dt, 2) / 2, dt, 1, 0, 0, 0,
-            0, 0, 0, pow(dt, 4) / 4, pow(dt, 3) / 3, pow(dt, 2) / 2,
-            0, 0, 0, pow(dt, 3) / 3, pow(dt, 2), dt,
-            0, 0, 0, pow(dt, 2) / 2, dt, 1;
-
+    Q << 1, 0, 0, 0, 0, 0,
+            0, 1, 0, 0, 0, 0,
+            0, 0, 1, 0, 0, 0,
+            0, 0, 0, 1, 0, 0,
+            0, 0, 0, 0, 1, 0,
+            0, 0, 0, 0, 0, 1;
+    Q = Q * 0.05;
     R << 0.05, 0, 0, 0.05;
     P << 300, 0, 0, 0, 0, 0,
             0, 300, 0, 0, 0, 0,
@@ -137,38 +142,53 @@ int main(int argc, char **argv) {
             cvwrapper::rtvecs pos = c.getLocation(); // relative pos and rot of marker in relation to camera
 
             Vec3d sumCameraRotationalVector;
-            Vec3d sumCameraTranslationalVector;
-            for (int i = 0; i < c.numberOfGridboards(); i++) {
-                //kameras rotation relativt markör
-                Mat rel_rot;
-                Rodrigues(pos.rvecs[i], rel_rot);
-                rel_rot = rel_rot.t();
+	    Vec3d sumCameraTranslationVector;
+            for (int i = 0; i < c.numberOfMarkers(); i++) {
+                MatExpr xyz;
+                Vec3d rot1;
+                Vec3d m_t = (Vec3d) markers[c.markerIds[i]].translation();
 
-                //kameras absoluta rotation
-                Mat abs_rot = markers[c.gridboardIds[i]].rotation() * rel_rot;
+                Mat rot_matrix; //3x3 rotations matris
+                Rodrigues(pos.rvecs[i], rot_matrix);
+                rot_matrix = rot_matrix.t();
 
-                //kameras absoluta position + flippa y - z
-                MatExpr abs_pos = rel_rot * (-1 * pos.tvecs[i]);
-                double x = ((Mat) abs_pos).at<double>(0, 0) + markers[c.gridboardIds[i]].translation()[0];
-                double y = ((Mat) abs_pos).at<double>(0, 1) + markers[c.gridboardIds[i]].translation()[1];
-                double z = ((Mat) abs_pos).at<double>(0, 2) + markers[c.gridboardIds[i]].translation()[2];
+                
+                Mat rot = markers[c.markerIds[i]].rotation() * rot_matrix;
+                xyz = markers[c.markerIds[i]].rotation() *(rot_matrix * (-1 * pos.tvecs[i]));
 
-                // translation and rotation vectors relative world
-                Vec3d translation(x, y, z);
-                Vec3d rotation = eulerRotation::rotationMatrixToEulerAngles(abs_rot);
+  		std::cout << xyz << std::endl;
+
+                rot1 = eulerRotation::rotationMatrixToEulerAngles(rot);
+	
+
+                double camX = ((Mat) xyz).at<double>(0, 0) + m_t[0];
+                double camY = ((Mat) xyz).at<double>(0, 1) + m_t[1];;
+                double camRZ = rot1[2];
+
+                out << camX << "," << camY << "," << camRZ << std::endl;
 
                 Eigen::VectorXd m1(m);
-                m1 << translation[0], translation[2];
+                m1 << camX, camY;
                 kalman.update(m1);
 
-                sumCameraTranslationalVector = translation;
-                sumCameraRotationalVector = rotation;
+                sumCameraRotationalVector[2] = camRZ;
+                out_kal << kalman.state()[0] << "," << kalman.state()[3] << "," << camRZ << std::endl;
+
+                std::cout << camX << ", " << camY << ", " << camRZ << std::endl;
+
+		sumCameraTranslationVector[0] += kalman.state()[0];
+		sumCameraTranslationVector[1] += kalman.state()[3];
+		sumCameraRotationalVector[2] += camRZ;
             }
+
+	    sumCameraTranslationVector /= c.numberOfMarkers();
+	    sumCameraRotationalVector /= c.numberOfMarkers();
+
 
 #ifdef SERIAL
             unsigned char char_array[15]; // 4 bytes * 3 floats + null terminator, 4+4+4+1 = 13
-            float x = sumCameraTranslationalVector[0];
-            float y = sumCameraTranslationalVector[1];
+            float x = sumCameraTranslationVector[0];
+            float y = sumCameraTranslationVector[1];
             float rz = sumCameraRotationalVector[2];
 
             memcpy(char_array, &x, 4);
@@ -183,8 +203,8 @@ int main(int argc, char **argv) {
 #endif
 
 #ifdef DEBUG
-            double camX = kalman.state()[0];
-            double camY = kalman.state()[3];
+            double camX = sumCameraTranslationVector[0];
+            double camY = sumCameraTranslationVector[1];
             double camRZ = sumCameraRotationalVector[2];
 
             Scalar col = Scalar(255, 53, 184); // Red, green, blue color
@@ -193,7 +213,6 @@ int main(int argc, char **argv) {
             c.drawBox(frame, col, 0, 0, 400, 400);
             c.drawCircle(frame, col, camX * 400 / 2,
                          camY * 400 / 2, 5);
-
             std::ostringstream s;
             s << "X: " << camX
               << " Y: " << camY

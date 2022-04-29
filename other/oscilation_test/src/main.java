@@ -19,7 +19,10 @@ public class main extends PApplet{
             TRUCK_ANGLE,
             TRUCK_VELOCITY,
             REROLL_COLOR,
-            CHANGE_PATH
+            CHANGE_PATH,
+            CONTROLLER_P,
+            CONTROLLER_I,
+            CONTROLLER_D,
         }
 
         class PathOptionData {
@@ -32,19 +35,22 @@ public class main extends PApplet{
             float angularVelocity = 0.25f;
             int steps = 200;
             float angleMax = 30.0f;
-            float trailerLength = 100.0f;
-            float truckLength = 12.0f;
+            float trailerLength = 120.0f;
+            float truckLength = 22.0f;
             float truckX = 0.0f;
             float truckY = 300.0f;
             float truckAngle = 15.0f;
             float truckVelocity = -2.0f;
+            float k_p = 2;
+            float k_i = 1;
+            float k_d = 1;
             float r, g, b;
             PathType pathType = PathType.SINE;
 
             void rollColor() {
-                r = 34;// = random(255);
-                g = 139;//= random(255);
-                b = 34;//= random(255);
+                r = random(255);
+                g = random(255);
+                b = random(255);
             }
 
             public PathOptionData() {
@@ -77,6 +83,9 @@ public class main extends PApplet{
             optionNames.put(Option.TRUCK_VELOCITY, "[v] Truck velocity");
             optionNames.put(Option.REROLL_COLOR, "[c] Reroll color");
             optionNames.put(Option.CHANGE_PATH, "[p] Change path");
+            optionNames.put(Option.CONTROLLER_P, "[0] P");
+            optionNames.put(Option.CONTROLLER_I, "[1] I");
+            optionNames.put(Option.CONTROLLER_D, "[1] D");
 
             addNewOption();
         }
@@ -111,6 +120,9 @@ public class main extends PApplet{
                 case TRUCK_ANGLE -> {return optionNames.get(option) + ": " + pathOptionDatas.get(selectedIndex).truckAngle;}
                 case TRUCK_VELOCITY -> {return optionNames.get(option) + ": " + pathOptionDatas.get(selectedIndex).truckVelocity;}
                 case REROLL_COLOR, CHANGE_PATH -> {return optionNames.get(option);}
+                case CONTROLLER_P -> {return optionNames.get(option) + ": " + pathOptionDatas.get(selectedIndex).k_p;}
+                case CONTROLLER_I -> {return optionNames.get(option) + ": " + pathOptionDatas.get(selectedIndex).k_i;}
+                case CONTROLLER_D -> {return optionNames.get(option) + ": " + pathOptionDatas.get(selectedIndex).k_d;}
             }
             return "Unknown";
         }
@@ -147,6 +159,15 @@ public class main extends PApplet{
                 } else if (selectedOption == Option.TRUCK_VELOCITY) {
                     float parsed = Float.parseFloat(inputString);
                     pathOptionDatas.get(selectedIndex).truckVelocity = parsed;
+                } else if (selectedOption == Option.CONTROLLER_P) {
+                    float parsed = Float.parseFloat(inputString);
+                    pathOptionDatas.get(selectedIndex).k_p = parsed;
+                } else if (selectedOption == Option.CONTROLLER_I) {
+                    float parsed = Float.parseFloat(inputString);
+                    pathOptionDatas.get(selectedIndex).k_i = parsed;
+                } else if (selectedOption == Option.CONTROLLER_D) {
+                    float parsed = Float.parseFloat(inputString);
+                    pathOptionDatas.get(selectedIndex).k_d = parsed;
                 }
             } catch (Exception e) {
                 System.out.println("Error parsing value");
@@ -295,10 +316,12 @@ public class main extends PApplet{
         float trailerLength;
         float truckLength;
 
+        float k_p, k_i, k_d;
+
         PPC ppc;
         Coord target = new Coord(0,0);
 
-        public Car(float x, float y, float rz, float vel, float lookahead, float angularVelocity, List<Coord> path, float angleMax, float trailerLength, float truckLength) {
+        public Car(float x, float y, float rz, float vel, float lookahead, float angularVelocity, List<Coord> path, float angleMax, float trailerLength, float truckLength, float k_p, float k_i, float k_d) {
             this.x = x;
             this.y = y;
             this.rz = rz;
@@ -308,6 +331,9 @@ public class main extends PApplet{
             this.angleMax = angleMax;
             this.trailerLength = trailerLength;
             this.truckLength = truckLength;
+            this.k_p = k_p;
+            this.k_i = k_i;
+            this.k_d = k_d;
 
             rz = rz - PI;
             xTrailer = x + cos(rz) * trailerLength;
@@ -318,9 +344,6 @@ public class main extends PApplet{
         }
 
         float sumError = 0;
-        float k_i = 1.0f;
-        float k_p = 2.0f;
-        float k_d = 1.0f;
         float oldErr = 0;
 
         void update() {
@@ -457,7 +480,7 @@ public class main extends PApplet{
 
         Car car = new Car(pathOptionData.truckX, pathOptionData.truckY, pathOptionData.truckAngle*PI/180+PI,
                 pathOptionData.truckVelocity, pathOptionData.lookahead, pathOptionData.angularVelocity, refPath,
-                pathOptionData.angleMax, pathOptionData.trailerLength, pathOptionData.truckLength);
+                pathOptionData.angleMax, pathOptionData.trailerLength, pathOptionData.truckLength, pathOptionData.k_p, pathOptionData.k_i, pathOptionData.k_d);
 
         for (int i = 0; i < duration; i++) {
             listOfPaths.get(pathIndex).add(new PositionData(
@@ -471,23 +494,6 @@ public class main extends PApplet{
     void drawPaths() {
         final int roadWidth = 80;
         final int roadThickness = 2;
-
-        pushStyle();
-//        for (Coord coord : refPath) {
-//            fill(255,255,255);
-//            circle(coord.x, coord.y, roadWidth);
-//        }
-//
-//        for (Coord coord : refPath) {
-//            fill(30);
-//            circle(coord.x, coord.y, roadWidth - roadThickness);
-//        }
-
-        for (Coord coord : refPath) {
-            fill(30);
-            circle(coord.x, coord.y, roadThickness);
-        }
-        popStyle();
 
         for (int i = 0; i < listOfPaths.size(); i++) {
             OptionManager.PathOptionData pathOptionData = optionManager.pathOptionDatas.get(i);
@@ -516,6 +522,23 @@ public class main extends PApplet{
                 popStyle();
             }
         }
+
+        pushStyle();
+//        for (Coord coord : refPath) {
+//            fill(255,255,255);
+//            circle(coord.x, coord.y, roadWidth);
+//        }
+//
+//        for (Coord coord : refPath) {
+//            fill(30);
+//            circle(coord.x, coord.y, roadWidth - roadThickness);
+//        }
+
+        for (Coord coord : refPath) {
+            fill(30);
+            circle(coord.x, coord.y, roadThickness);
+        }
+        popStyle();
     }
 
     public void keyPressed() {
@@ -570,9 +593,19 @@ public class main extends PApplet{
                 setStraightPath();
                 pathOptionData.pathType = OptionManager.PathOptionData.PathType.STRAIGHT;
             } else if (pathOptionData.pathType == OptionManager.PathOptionData.PathType.STRAIGHT) {
-                setSinePath();
+                //setSinePath();
+                setSPath();
                 pathOptionData.pathType = OptionManager.PathOptionData.PathType.SINE;
             }
+        }
+        else if (key == '0') {
+            optionManager.selectedOption = OptionManager.Option.CONTROLLER_P;
+        }
+        else if (key == '1') {
+            optionManager.selectedOption = OptionManager.Option.CONTROLLER_I;
+        }
+        else if (key == '2') {
+            optionManager.selectedOption = OptionManager.Option.CONTROLLER_D;
         }
         else if (key == 'n') {
             optionManager.addNewOption();
@@ -595,7 +628,7 @@ public class main extends PApplet{
     public void draw() {
         background(240);
         noStroke();
-        //translate(0, -200);
+        translate(0, -200);
         optionManager.draw();
         drawPaths();
     }
