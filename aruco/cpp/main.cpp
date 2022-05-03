@@ -8,6 +8,7 @@
 #include <cmath>
 #include <Eigen/Dense>
 #include <fstream>
+#include <sys/stat.h>
 
 #include "Kalman.h"
 #include "eulerRotation.h"
@@ -63,6 +64,9 @@ int main(int argc, char **argv) {
     }
 
     cvwrapper c = cvwrapper(0, CAP_ANY);
+
+    char *buffer = outFolder.data();
+    mkdir(buffer, 0777);
 
     std::ofstream out;
     std::ofstream out_kal;
@@ -121,7 +125,7 @@ int main(int argc, char **argv) {
             0, 0, 0, pow(dt, 4) / 4, pow(dt, 3) / 2, pow(dt, 2) / 2,
             0, 0, 0, pow(dt, 3) / 2, pow(dt, 2), dt,
             0, 0, 0, pow(dt, 2) / 2, dt, 1;
-    
+
     R << 0.05, 0, 0, 0.05;
     P << 300, 0, 0, 0, 0, 0,
             0, 300, 0, 0, 0, 0,
