@@ -125,6 +125,7 @@ int main(int argc, char **argv) {
             0, 0, 0, pow(dt, 4) / 4, pow(dt, 3) / 2, pow(dt, 2) / 2,
             0, 0, 0, pow(dt, 3) / 2, pow(dt, 2), dt,
             0, 0, 0, pow(dt, 2) / 2, dt, 1;
+    Q = Q * pow(0.05, 2); // var^2
 
     R << 0.05, 0, 0, 0.05;
     P << 300, 0, 0, 0, 0, 0,
