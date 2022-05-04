@@ -29,16 +29,18 @@ public:
         servo.attach(pin);
     }
 
-    float old = 0;
+    int old_write = 44;
     void writeAngle(float angle) {
-        servo.write(angle*180/PI + 45);
+        int ang = (int)(angle*180/PI) + 44;
+
+        servo.write(ang);
         return;
 
-        float incAngle = max(-PI/180,min(PI/180,angle-old));
-        float newAngle = max(-15*PI/180,min(15*PI/180,old+incAngle));
-        old = newAngle;
-        servo.write(newAngle*180/PI+45);
-        Serial.println(newAngle*180/PI+45);
+        int new_ang = old_write + max(-15, min(15, ang - old_write));
+        new_ang = max(44-20, min(new_ang, 44 + 20));
+
+        servo.write(new_ang);
+        old_write = new_ang;
     }
 };
 

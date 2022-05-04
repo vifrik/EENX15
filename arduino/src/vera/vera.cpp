@@ -16,7 +16,7 @@
 #define MOTOR_FIRST_DIR_PIN 2
 #define MOTOR_SECOND_DIR_PIN 3
 #define MOTOR_SPEED_PIN 4
-#define MOTOR_SPEED 125
+#define MOTOR_SPEED 110
 
 #define LOOKAHEAD_DISTANCE 0.2
 #define SERIAL_BAUDRATE 9600
@@ -53,15 +53,18 @@ void setup() {
 
 PositionData posTruck;
 PositionData posTrailer;
+
+#include <Servo.h>
+Servo servo;
 void loop() {
     float phi = potentiometer.read();
 
     if(!position.getPositionTrailer(phi, posTruck, posTrailer)) {
-        Serial.println("Fail get posttrailer");
+        //Serial.println("Fail get posttrailer");
         return;
     }
 
-    Coord posTarget = ppc.getTarget(path, 0.75, Coord(posTrailer.x, posTrailer.y));
+    Coord posTarget = ppc.getTarget(path, 0.5, Coord(posTrailer.x, posTrailer.y));
     float delta = position.steeringAngle(posTruck, posTrailer, posTarget);
 
     servoManager.writeAngle(delta);
@@ -70,9 +73,11 @@ void loop() {
         motor.stop();
     }
 
+#ifdef PRINT
     Serial.print("potentio: ");
     Serial.println(phi);
     Serial.println("------------------------");
+#endif
 
-    //delay(FRAME_DELAY);
+    delay(FRAME_DELAY);
 }

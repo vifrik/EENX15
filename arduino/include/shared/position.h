@@ -43,17 +43,17 @@ public:
 
     bool getPositionTrailer(float anglePotentiometer, PositionData& posTruck, PositionData& posTrailer) {
         unsigned char bytesBuffer[15]; 
-        int size = SerialUSB.readBytesUntil(byte(0), bytesBuffer, 15);
+        int size = Serial.readBytesUntil(byte(0), bytesBuffer, 15);
         if(size != 14) return false;
 
         memcpy(&posTruck, bytesBuffer, 14);  
         uint16_t c = crc16(bytesBuffer, 12);
 
         posTruck.x -= cos(posTruck.rz) * CAMERA_OFFSET;
-        posTruck.y -= cos(posTruck.rz) * CAMERA_OFFSET;
+        posTruck.y -= sin(posTruck.rz) * CAMERA_OFFSET;
 
-        posTrailer.x = posTruck.x - cos(posTruck.rz - anglePotentiometer) * LENGTH_TRAILER;
-        posTrailer.y = posTruck.y - sin(posTruck.rz - anglePotentiometer) * LENGTH_TRAILER;
+        posTrailer.x = posTruck.x - cos(posTruck.rz + anglePotentiometer) * LENGTH_TRAILER;
+        posTrailer.y = posTruck.y - sin(posTruck.rz + anglePotentiometer) * LENGTH_TRAILER;
         posTrailer.rz = posTruck.rz + PI + anglePotentiometer;
 
         return c == posTruck.crc;
@@ -63,11 +63,13 @@ public:
     float oldTheta = 0;
     float oldError = 0;
     float errorInteg = 0;
+    float oldRZ = 0;
 
     float k_i = 1.0f;
-    float k_p = 1.0f;
+    float k_p = 2.0f;
     float k_d = 1.0f;
 
+    Coord old_pos = Coord(0,0);
     float steeringAngle(PositionData posTruck, PositionData posTrailer, Coord posDesired) {
         uint32_t timeNow = millis();
         float dt = (timeNow - timeOld) / 1000.0f; // [s]
@@ -86,8 +88,15 @@ public:
         float d_theta = (posTrailer.rz - oldTheta) / dt;
         oldTheta = posTrailer.rz;
 
-        float deltaTarget = -atan2((d_theta - d_angleDesired) * LENGTH_TRUCK, 0.5);
+        float dRZ = (posTruck.rz - oldRZ) / dt;
+        oldRZ = posTruck.rz;
 
+        float vel = -1 * sqrt(pow(posTrailer.x - old_pos.x, 2) + pow(posTrailer.y - old_pos.y, 2)) / dt;
+        old_pos = Coord(posTrailer.x, posTrailer.y);
+
+        float deltaTarget = atan2((d_theta - d_angleDesired - dRZ) * LENGTH_TRUCK, vel);
+
+#ifdef PRINT
 #pragma region Print
         Serial.print("posTruck.x: ");
         Serial.println(posTruck.x);
@@ -116,6 +125,7 @@ public:
         Serial.print("dt: ");
         Serial.println(dt);
 #pragma endregion Region
+#endif
 
         timeOld = timeNow;
         return deltaTarget;
