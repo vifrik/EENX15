@@ -8,7 +8,8 @@
 #include <cmath>
 #include <Eigen/Dense>
 #include <fstream>
-#include <sys/stat.h>
+#include <chrono>
+#include <thread>
 
 #include "Kalman.h"
 #include "eulerRotation.h"
@@ -183,22 +184,22 @@ int main(int argc, char **argv) {
                 sumCameraRotationalVector[2] = camRZ;
                 out_kal << kalman.state()[0] << "," << kalman.state()[3] << "," << camRZ << std::endl;
 
-                std::cout << camX << "," << camY << "," << camRZ << std::endl;
+                std::cout << camX << ", " << camY << ", " << camRZ << std::endl;
 
-                sumCameraTranslationVector[0] += kalman.state()[0];
-                sumCameraTranslationVector[1] += kalman.state()[3];
-                sumCameraRotationalVector[2] += camRZ;
+		sumCameraTranslationVector[0] += kalman.state()[0];
+		sumCameraTranslationVector[1] += kalman.state()[3];
+		sumCameraRotationalVector[2] += camRZ;
             }
 
-            sumCameraTranslationVector /= c.numberOfMarkers();
-            sumCameraRotationalVector /= c.numberOfMarkers();
+	    sumCameraTranslationVector /= c.numberOfMarkers();
+	    sumCameraRotationalVector /= c.numberOfMarkers();
 
 
 #ifdef SERIAL
             unsigned char char_array[15]; // 4 bytes * 3 floats + null terminator, 4+4+4+1 = 13
             float x = sumCameraTranslationVector[0];
             float y = sumCameraTranslationVector[1];
-            float rz = sumCameraRotationalVector[2];
+            float rz = sumCameraRotationalVector[2] - M_PI_2;
 
             memcpy(char_array, &x, 4);
             memcpy(char_array + 4, &y, 4);
@@ -229,6 +230,7 @@ int main(int argc, char **argv) {
             c.drawText(frame, s.str(), camX * 400 / 2,
                        camY * 400 / 2);
 #endif
+	    //std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
 #ifdef DEBUG
         c.show(frame); // Show the frame with drawings
