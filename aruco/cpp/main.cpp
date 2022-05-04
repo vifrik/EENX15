@@ -8,6 +8,7 @@
 #include <cmath>
 #include <Eigen/Dense>
 #include <fstream>
+#include <sys/stat.h>
 
 #include "Kalman.h"
 #include "eulerRotation.h"
@@ -43,13 +44,17 @@ uint16_t crc16(unsigned char *data, size_t len) {
 
 int main(int argc, char **argv) {
     String markerFilePath;
+    String outFolder;
 
     for (int i = 1; i < argc; i++) {
         if (i != argc - 1) {
             if (strcmp(argv[i], "--markerfile") == 0 || strcmp(argv[i], "-m") == 0) {
                 markerFilePath = argv[i + 1];
-                i++;
-            }
+            } else if (strcmp(argv[i], "--out") == 0 || strcmp(argv[i], "-o") == 0) {
+                outFolder = argv[i + 1];
+            } else
+                continue;
+            i++;
         }
     }
 
@@ -60,10 +65,13 @@ int main(int argc, char **argv) {
 
     cvwrapper c = cvwrapper(0, CAP_ANY);
 
+    char *buffer = outFolder.data();
+    mkdir(buffer, 0777);
+
     std::ofstream out;
     std::ofstream out_kal;
-    out.open("out.txt");
-    out_kal.open("out_kalman.txt");
+    out.open(outFolder + "/out.txt");
+    out_kal.open(outFolder + "/out_kalman.txt");
 
 #ifdef SERIAL
     // Open port
@@ -87,7 +95,7 @@ int main(int argc, char **argv) {
 #endif
 
     std::vector<Affine3d> markers;
-    FileStorage fs_read("markers.txt", 0);
+    FileStorage fs_read(markerFilePath, 0);
     writevec::readVectorAffine3d(fs_read, "markers", markers);
     fs_read.release();
 
@@ -111,13 +119,14 @@ int main(int argc, char **argv) {
     C << 1, 0, 0, 0, 0, 0,
             0, 0, 0, 1, 0, 0;
 
-    Q << 1, 0, 0, 0, 0, 0,
-            0, 1, 0, 0, 0, 0,
-            0, 0, 1, 0, 0, 0,
-            0, 0, 0, 1, 0, 0,
-            0, 0, 0, 0, 1, 0,
-            0, 0, 0, 0, 0, 1;
-    Q = Q * 0.05;
+    Q << pow(dt, 4) / 4, pow(dt, 3) / 2, pow(dt, 2) / 2, 0, 0, 0,
+            pow(dt, 3) / 2, pow(dt, 2), dt, 0, 0, 0,
+            pow(dt, 2) / 2, dt, 1, 0, 0, 0,
+            0, 0, 0, pow(dt, 4) / 4, pow(dt, 3) / 2, pow(dt, 2) / 2,
+            0, 0, 0, pow(dt, 3) / 2, pow(dt, 2), dt,
+            0, 0, 0, pow(dt, 2) / 2, dt, 1;
+    Q = Q * pow(0.05, 2); // var^2
+
     R << 0.05, 0, 0, 0.05;
     P << 300, 0, 0, 0, 0, 0,
             0, 300, 0, 0, 0, 0,
@@ -142,7 +151,7 @@ int main(int argc, char **argv) {
             cvwrapper::rtvecs pos = c.getLocation(); // relative pos and rot of marker in relation to camera
 
             Vec3d sumCameraRotationalVector;
-	    Vec3d sumCameraTranslationVector;
+            Vec3d sumCameraTranslationVector;
             for (int i = 0; i < c.numberOfMarkers(); i++) {
                 MatExpr xyz;
                 Vec3d rot1;
@@ -152,14 +161,14 @@ int main(int argc, char **argv) {
                 Rodrigues(pos.rvecs[i], rot_matrix);
                 rot_matrix = rot_matrix.t();
 
-                
-                Mat rot = markers[c.markerIds[i]].rotation() * rot_matrix;
-                xyz = markers[c.markerIds[i]].rotation() *(rot_matrix * (-1 * pos.tvecs[i]));
 
-  		std::cout << xyz << std::endl;
+                Mat rot = markers[c.markerIds[i]].rotation() * rot_matrix;
+                xyz = markers[c.markerIds[i]].rotation() * (rot_matrix * (-1 * pos.tvecs[i]));
+
+                std::cout << xyz << std::endl;
 
                 rot1 = eulerRotation::rotationMatrixToEulerAngles(rot);
-	
+
 
                 double camX = ((Mat) xyz).at<double>(0, 0) + m_t[0];
                 double camY = ((Mat) xyz).at<double>(0, 1) + m_t[1];;
@@ -174,15 +183,15 @@ int main(int argc, char **argv) {
                 sumCameraRotationalVector[2] = camRZ;
                 out_kal << kalman.state()[0] << "," << kalman.state()[3] << "," << camRZ << std::endl;
 
-                std::cout << camX << ", " << camY << ", " << camRZ << std::endl;
+                std::cout << camX << "," << camY << "," << camRZ << std::endl;
 
-		sumCameraTranslationVector[0] += kalman.state()[0];
-		sumCameraTranslationVector[1] += kalman.state()[3];
-		sumCameraRotationalVector[2] += camRZ;
+                sumCameraTranslationVector[0] += kalman.state()[0];
+                sumCameraTranslationVector[1] += kalman.state()[3];
+                sumCameraRotationalVector[2] += camRZ;
             }
 
-	    sumCameraTranslationVector /= c.numberOfMarkers();
-	    sumCameraRotationalVector /= c.numberOfMarkers();
+            sumCameraTranslationVector /= c.numberOfMarkers();
+            sumCameraRotationalVector /= c.numberOfMarkers();
 
 
 #ifdef SERIAL
