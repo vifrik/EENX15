@@ -66,9 +66,6 @@ int main(int argc, char **argv) {
 
     cvwrapper c = cvwrapper(0, CAP_ANY);
 
-    char *buffer = outFolder.data();
-    mkdir(buffer, 0777);
-
     std::ofstream out;
     std::ofstream out_kal;
     out.open(outFolder + "/out.txt");
@@ -158,6 +155,9 @@ int main(int argc, char **argv) {
                 Vec3d rot1;
                 Vec3d m_t = (Vec3d) markers[c.markerIds[i]].translation();
 
+                if (sqrt(pow(pos.tvecs[i][0], 2) + pow(pos.tvecs[i][2], 2)) > 1.5)
+                    continue;
+
                 Mat rot_matrix; //3x3 rotations matris
                 Rodrigues(pos.rvecs[i], rot_matrix);
                 rot_matrix = rot_matrix.t();
@@ -175,24 +175,26 @@ int main(int argc, char **argv) {
                 double camY = ((Mat) xyz).at<double>(0, 1) + m_t[1];;
                 double camRZ = rot1[2];
 
-                out << camX << "," << camY << "," << camRZ << std::endl;
-
                 Eigen::VectorXd m1(m);
                 m1 << camX, camY;
+                if (abs(camY) < 0.5) {
+                    continue;
+                }
                 kalman.update(m1);
 
+                out << camX << "," << camY << "," << camRZ << std::endl;
                 sumCameraRotationalVector[2] = camRZ;
                 out_kal << kalman.state()[0] << "," << kalman.state()[3] << "," << camRZ << std::endl;
 
                 std::cout << camX << ", " << camY << ", " << camRZ << std::endl;
 
-		sumCameraTranslationVector[0] += kalman.state()[0];
-		sumCameraTranslationVector[1] += kalman.state()[3];
-		sumCameraRotationalVector[2] += camRZ;
+                sumCameraTranslationVector[0] += kalman.state()[0];
+                sumCameraTranslationVector[1] += kalman.state()[3];
+                sumCameraRotationalVector[2] += camRZ;
             }
 
-	    sumCameraTranslationVector /= c.numberOfMarkers();
-	    sumCameraRotationalVector /= c.numberOfMarkers();
+            sumCameraTranslationVector /= c.numberOfMarkers();
+            sumCameraRotationalVector /= c.numberOfMarkers();
 
 
 #ifdef SERIAL
@@ -230,7 +232,7 @@ int main(int argc, char **argv) {
             c.drawText(frame, s.str(), camX * 400 / 2,
                        camY * 400 / 2);
 #endif
-	    //std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            //std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
 #ifdef DEBUG
         c.show(frame); // Show the frame with drawings
