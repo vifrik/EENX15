@@ -296,10 +296,8 @@
       /><rect x="360" width="80" height="250" y="470" style="stroke:none;"
       /><path d="M392 370 L408 370 L406 382 L394 382" style="fill:rgb(38,197,243); stroke:none;"
       /><rect x="388" y="385" width="24" style="fill:rgb(38,197,243); stroke:none;" height="40"
-    /></g
-    ><g style="fill:rgb(38,197,243); fill-opacity:0.3922; stroke-width:5; stroke-opacity:0.3922; stroke-linecap:round; stroke:rgb(38,197,243);"
-    ><path style="stroke:none;" d="M408 370 L392 370 L250 50 L550 50"
-      /><image preserveAspectRatio="none" x="360" width="80" y="10" height="80" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAAAB5fY51AAAJBElEQVR4Xu3RMQ4E
+      /><path d="M408 370 L392 370 L250 50 L550 50" style="fill:rgb(250,102,7); stroke:none;"
+      /><image x="360" y="10" width="80" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAAAB5fY51AAAJBElEQVR4Xu3RMQ4E
 QQwCwf3/p+9yCB0MoG6pEjLL3/d9PwAoYQMApLIBAFLZAACpbACAVDYAQCobACCV
 DQCQygYASGUDAKSyAQBS2QAAqWwAgFQ2AEAqGwAglQ0AkMoGAEhlAwCksgEAUtkA
 AKlsAIBUNgBAKhsAIJUNAJDKBgBIZQMApLIBAFLZAACpbACAVDYAQCobACCVDQCQ
@@ -348,8 +346,8 @@ SGUDAKSyAQBS2QAAqWwAgFQ2AEAqGwAglQ0AkMoGAEhlAwCksgEAUtkAAKlsAIBU
 NgBAKhsAIJUNAJDKBgBIZQMApLIBAFLZAACpbACAVDYAQCobACCVDQCQygYASGUD
 AKSyAQBS2QAAqWwAgFQ2AEAqGwAglQ0AkMoGAEhlAwCksgEAUtkAAKlsAIBUNgBA
 KhsAIJUNAJDKBgBIZQMApLIBAFLZAACpbACAVDYAQCobACCVDQAQ6Q++18g6SQkR
-oQAAAABJRU5ErkJggg=="
-      /><image preserveAspectRatio="none" x="160" width="80" y="10" height="80" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAAAB5fY51AAAJBElEQVR4Xu3RMQ4E
+oQAAAABJRU5ErkJggg==" style="fill:rgb(250,102,7); stroke:rgb(250,102,7);" height="80" preserveAspectRatio="none"
+      /><image x="160" y="10" width="80" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAAAB5fY51AAAJBElEQVR4Xu3RMQ4E
 QQwCwf3/p+9yCB0MoG6pEjLL3/d9PwAoYQMApLIBAFLZAACpbACAVDYAQCobACCV
 DQCQygYASGUDAKSyAQBS2QAAqWwAgFQ2AEAqGwAglQ0AkMoGAEhlAwCksgEAUtkA
 AKlsAIBUNgBAKhsAIJUNAJDKBgBIZQMApLIBAFLZAACpbACAVDYAQCobACCVDQCQ
@@ -398,8 +396,8 @@ SGUDAKSyAQBS2QAAqWwAgFQ2AEAqGwAglQ0AkMoGAEhlAwCksgEAUtkAAKlsAIBU
 NgBAKhsAIJUNAJDKBgBIZQMApLIBAFLZAACpbACAVDYAQCobACCVDQCQygYASGUD
 AKSyAQBS2QAAqWwAgFQ2AEAqGwAglQ0AkMoGAEhlAwCksgEAUtkAAKlsAIBUNgBA
 KhsAIJUNAJDKBgBIZQMApLIBAFLZAACpbACAVDYAQCobACCVDQAQ6Q++18g6SQkR
-oQAAAABJRU5ErkJggg=="
-      /><image preserveAspectRatio="none" x="560" width="80" y="10" height="80" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAAAB5fY51AAAJBElEQVR4Xu3RMQ4E
+oQAAAABJRU5ErkJggg==" style="fill:rgb(250,102,7); stroke:rgb(250,102,7);" height="80" preserveAspectRatio="none"
+      /><image x="560" y="10" width="80" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAAAB5fY51AAAJBElEQVR4Xu3RMQ4E
 QQwCwf3/p+9yCB0MoG6pEjLL3/d9PwAoYQMApLIBAFLZAACpbACAVDYAQCobACCV
 DQCQygYASGUDAKSyAQBS2QAAqWwAgFQ2AEAqGwAglQ0AkMoGAEhlAwCksgEAUtkA
 AKlsAIBUNgBAKhsAIJUNAJDKBgBIZQMApLIBAFLZAACpbACAVDYAQCobACCVDQCQ
@@ -448,7 +446,7 @@ SGUDAKSyAQBS2QAAqWwAgFQ2AEAqGwAglQ0AkMoGAEhlAwCksgEAUtkAAKlsAIBU
 NgBAKhsAIJUNAJDKBgBIZQMApLIBAFLZAACpbACAVDYAQCobACCVDQCQygYASGUD
 AKSyAQBS2QAAqWwAgFQ2AEAqGwAglQ0AkMoGAEhlAwCksgEAUtkAAKlsAIBUNgBA
 KhsAIJUNAJDKBgBIZQMApLIBAFLZAACpbACAVDYAQCobACCVDQAQ6Q++18g6SQkR
-oQAAAABJRU5ErkJggg=="
+oQAAAABJRU5ErkJggg==" style="fill:rgb(250,102,7); stroke:rgb(250,102,7);" height="80" preserveAspectRatio="none"
     /></g
   ></g
 ></svg

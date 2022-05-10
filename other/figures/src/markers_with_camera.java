@@ -89,7 +89,7 @@ public class markers_with_camera extends PApplet {
         rect(400 - 12, 400 - 15, 24, 40);
 
         // Camera fov
-        fill(0x6426C5F3);
+        fill(0xfffa6607);
         beginShape();
         vertex(400 + 8, 400 - 30);
         vertex(400 - 8, 400 - 30);
