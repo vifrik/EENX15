@@ -34,16 +34,42 @@ purePursuitController ppc = purePursuitController(); //path, LOOKAHEAD_DISTANCE)
 
 
 void setup() {
-    path.setStorage(coords);
-    for (int i = 0; i < 1000; i++) {
-        //Coord coord = Coord(i / 100.0, sin((i / 100.0) * 500.0 * PI / 180.0));
-        Coord coord = Coord(1, i/100.0f);
-        path.push_back(coord);
-    }
-
     Serial.begin(SERIAL_BAUDRATE);
     Wire.begin();
     servoManager.writeAngle(ZERO_ANGLE);
+
+    path.setStorage(coords);
+    float radius = 0.9;
+    float distance = 3.3;
+    float steps = 300;
+    for (int i = 0; i < steps; i++) {
+        float step = (distance - radius) / steps;
+        Coord coord = Coord(i * step, 0);
+        path.push_back(coord);
+    }
+
+    Coord lastPos = path.at(path.size() - 1);
+    for (int i = 0; i < steps; i++) {
+        float step = PI / (2*steps);
+        Coord coord = Coord(lastPos.x + radius * cos(-(PI / 2 - step * i)), lastPos.y + radius + radius * sin(-(PI / 2 - step * i)));
+        path.push_back(coord);
+    }
+
+    Coord lastRotPos = path.at(path.size() - 1);
+    for (int i = 0; i < steps; i++) {
+        float step = (distance - radius) / steps;
+        Coord coord = Coord(lastRotPos.x, lastRotPos.y + i * step);
+        path.push_back(coord);
+    }
+
+    // for (int i = 0; i < path.size(); i++) {
+    //     Serial.print(path.at(i).x);
+    //     Serial.print(",");
+    //     Serial.print(path.at(i).y);
+    //     Serial.println(",0");
+    // }
+
+    // exit(1);
 
     delay(WAKE_DELAY);
 

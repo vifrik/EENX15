@@ -21,10 +21,10 @@ void genMatrix(float x, float y, float rot, std::vector<Affine3d> &markers) {
 int main(int argc, char **argv) {
     std::vector<Affine3d> markers;
 
-    genMatrix(1, 0, 0, markers);
-    genMatrix(0, 1, -M_PI_2, markers);
-    genMatrix(1, 2, M_PI, markers);
-    genMatrix(2, 1, M_PI_2, markers);
+    genMatrix(2 * 0.3, 3 * 0.3, -M_PI_2 - M_PI_4, markers);
+    genMatrix(6 * 0.3, 3 * 0.3, -M_PI_2 - M_PI_4, markers);
+    genMatrix(2 * 0.3, -2 * 0.3, -M_PI_4, markers);
+    genMatrix(0, 0, -M_PI_2, markers);
 
     FileStorage fs_write("markers.txt", 1);
     writevec::writeVectorAffine3d(fs_write, "markers", markers);
