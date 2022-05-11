@@ -45,7 +45,9 @@ public class markers_with_camera extends PApplet {
         }
     }
 
-    PImage marker;
+    PImage marker1;
+    PImage marker2;
+    PImage marker3;
 
     public void settings(){
         size(800, 800);
@@ -55,7 +57,9 @@ public class markers_with_camera extends PApplet {
         beginRecord(SVG, "exported/markers_with_camera.svg");
         noStroke();
 
-        marker = loadImage("marker0.png");
+        marker1 = loadImage("marker0.png");
+        marker2 = loadImage("marker1.png");
+        marker3 = loadImage("marker2.png");
     }
 
     public void draw() {
@@ -97,9 +101,9 @@ public class markers_with_camera extends PApplet {
         vertex(550, 50);
         endShape();
 
-        image(marker, (800 - 80) / 2, 50 - 40, 80, 80);
-        image(marker, (800 - 80) / 2 - 200, 50 - 40, 80, 80);
-        image(marker, (800 - 80) / 2 + 200, 50 - 40, 80, 80);
+        image(marker1, (800 - 80) / 2, 50 - 40, 80, 80);
+        image(marker2, (800 - 80) / 2 - 200, 50 - 40, 80, 80);
+        image(marker3, (800 - 80) / 2 + 200, 50 - 40, 80, 80);
 
 //        noFill();
 //        stroke(255, 255, 0);
