@@ -58,7 +58,7 @@ public class transformation extends PApplet {
     }
 
     public void settings(){
-        size(810, 470);
+        size(870, 670);
         this.g = new PGraphics();
         noLoop();
         beginRecord(SVG, "exported/transformation.svg");
@@ -66,14 +66,14 @@ public class transformation extends PApplet {
     }
 
     public void draw() {
-        background(30);
+        background(240);
 
         // Marker
         //stroke(240);
         //rect((800 - 80) / 2 + 200, 50 - 2.5f, 80, 5);
 
         noStroke();
-        translate(20, 20);
+        translate(30, 30);
 
         pushStyle();
         noFill();
@@ -89,33 +89,33 @@ public class transformation extends PApplet {
         popStyle();
 
         pushStyle();
-        stroke(240);
+        fill(30);
         circle(50, 50, 10);
         circle(550 * 8 / 10 + 50, 50, 10);
         circle(600, 400, 10);
-
-        fill(30);            // weird bug
-        text(" ",0, 0); // something is not cleared properly and drawing empty text seems to fix it
-        fill(240);
-        textAlign(LEFT, BOTTOM);
-        text("$(0, 0)$", 50, 50 - 5);
-        textAlign(LEFT, BOTTOM);
-        text("$(x_m, y_m)$", 550 * 8 / 10 + 50, 50 - 5);
-        textAlign(LEFT, TOP);
-        text("$(x_k, y_k)$", 620, 400);
-
-        textSize(32);
-        fill(30);            // weird bug
-        text(" ",0, 0); // something is not cleared properly and drawing empty text seems to fix it
-        textAlign(CENTER, BOTTOM);
-        fill(255, 0, 0);
-        text("$T_{mv}$", (550 * 8 / 10 + 50 - 50) / 2 + 50, 50 - 5);
-        textAlign(LEFT, BOTTOM);
-        fill(0, 255, 0);
-        text("$T_{km}$", (600 - 550 * 8 / 10 + 50) / 2 + 550 * 8 / 10, (400 - 50) / 2 + 50);
-        textAlign(RIGHT, TOP);
-        fill(255, 255, 0);
-        text("$T_{kv}$", (600 - 50) / 2 + 50, (400 - 50) / 2 + 50);
+//
+//        fill(30);            // weird bug
+//        text(" ",0, 0); // something is not cleared properly and drawing empty text seems to fix it
+//        fill(240);
+//        textAlign(LEFT, BOTTOM);
+//        text("$(0, 0)$", 50, 50 - 5);
+//        textAlign(LEFT, BOTTOM);
+//        text("$(x_m, y_m)$", 550 * 8 / 10 + 50, 50 - 5);
+//        textAlign(LEFT, TOP);
+//        text("$(x_k, y_k)$", 620, 400);
+//
+//        textSize(32);
+//        fill(30);            // weird bug
+//        text(" ",0, 0); // something is not cleared properly and drawing empty text seems to fix it
+//        textAlign(CENTER, BOTTOM);
+//        fill(255, 0, 0);
+//        text("$T_{mv}$", (550 * 8 / 10 + 50 - 50) / 2 + 50, 50 - 5);
+//        textAlign(LEFT, BOTTOM);
+//        fill(0, 255, 0);
+//        text("$T_{km}$", (600 - 550 * 8 / 10 + 50) / 2 + 550 * 8 / 10, (400 - 50) / 2 + 50);
+//        textAlign(RIGHT, TOP);
+//        fill(255, 255, 0);
+//        text("$T_{kv}$", (600 - 50) / 2 + 50, (400 - 50) / 2 + 50);
         popStyle();
 
         endRecord();
